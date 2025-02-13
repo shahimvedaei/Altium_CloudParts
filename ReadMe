@@ -1,0 +1,11 @@
+1. Requirements:
+    a. Python 3
+    b. requirements.txt
+    c. Altium Designer
+
+2. How to install:
+Copy Chila360_utils.pt to C:\<path to Altium dir>\AD20
+
+3. Usage:
+Run the script via altium
+Files->Run Script...->Chila360.pas
