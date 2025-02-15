@@ -269,7 +269,7 @@ end;
 // UI: Button_dbloadClick
 procedure TForm1.Button_dbloadClick(Sender: TObject);
 begin
-    LoadCSVToListView(Edit_dbsaveto.Text);
+    LoadCSVToListView(Edit_dbpath.Text);
 end;
 {..............................................................................}
 
@@ -479,7 +479,7 @@ end;
 // UI: Button_findClick
 procedure TForm1.Button_findClick(Sender: TObject);
 begin
-    LoadCSVToListView(Edit_dbsaveto.Text);
+    LoadCSVToListView(Edit_dbpath.Text);
 end;
 {..............................................................................}
 
