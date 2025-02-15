@@ -243,7 +243,7 @@ begin
                    ((ComboBox_filter.Text = 'SCHLIB') and (UpperCase(Columns[1]) <> 'SCHLIB')) then
                     Continue;
 
-                if (FilterMask = '*') or (Pos(LowerCase(FilterMask), LowerCase(Columns[0])) > 0) then
+                if (Length(FilterMask) = 0) or (FilterMask = '*') or (Pos(LowerCase(FilterMask), LowerCase(Columns[0])) > 0) then
                 begin
                     ListItem := ListView1.Items.Add;
                     ListItem.Caption := Columns[0];  // First column (main item)
