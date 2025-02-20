@@ -3,6 +3,7 @@ object Form1: TForm1
   Top = 0
   Width = 725
   Height = 789
+  HorzScrollBar.Visible = False
   AutoScroll = True
   Caption = 'Chila360 Online Lib Search'
   Color = clGrayText
@@ -15,23 +16,25 @@ object Form1: TForm1
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  OnShow = Form_loadSettings
   PixelsPerInch = 120
   TextHeight = 16
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 1017
-    Width = 686
+    Top = 1033
+    Width = 1022
     Height = 19
     Panels = <
       item
         Width = 50
       end>
+    ExplicitWidth = 1050
   end
   object GroupBox3: TGroupBox
     Left = 12
     Top = 0
     Width = 664
-    Height = 560
+    Height = 583
     Caption = 'Search'
     TabOrder = 1
     object Label1: TLabel
@@ -48,8 +51,8 @@ object Form1: TForm1
       ParentFont = False
     end
     object Button_libadd: TButton
-      Left = 152
-      Top = 528
+      Left = 512
+      Top = 544
       Width = 136
       Height = 25
       Caption = 'Add Lib to project'
@@ -87,15 +90,6 @@ object Form1: TForm1
       TabOrder = 3
       OnClick = Button_dbfetchClick
     end
-    object Button_dbload: TButton
-      Left = 384
-      Top = 24
-      Width = 59
-      Height = 25
-      Caption = 'Load DB'
-      TabOrder = 4
-      OnClick = Button_dbloadClick
-    end
     object ListView1: TListView
       Left = 16
       Top = 64
@@ -118,29 +112,46 @@ object Form1: TForm1
       ReadOnly = True
       RowSelect = True
       ShowWorkAreas = True
-      TabOrder = 5
+      TabOrder = 4
     end
     object Edit_filter: TEdit
       Left = 136
       Top = 24
       Width = 244
       Height = 24
-      TabOrder = 6
+      TabOrder = 5
       Text = '*'
     end
     object Button_libdownload: TButton
-      Left = 16
-      Top = 528
+      Left = 384
+      Top = 544
       Width = 124
       Height = 25
       Caption = 'Download'
-      TabOrder = 7
+      TabOrder = 6
       OnClick = Button_libdownloadClick
+    end
+    object Button_place: TButton
+      Left = 16
+      Top = 544
+      Width = 75
+      Height = 25
+      Caption = 'Place'
+      TabOrder = 7
+      OnClick = Button_placeClick
+    end
+    object ProgressBar1: TProgressBar
+      Left = 20
+      Top = 528
+      Width = 624
+      Height = 7
+      Step = 1
+      TabOrder = 8
     end
   end
   object GroupBox1: TGroupBox
     Left = 12
-    Top = 576
+    Top = 592
     Width = 664
     Height = 132
     Caption = 'Settings'
@@ -151,9 +162,9 @@ object Form1: TForm1
     object Label4: TLabel
       Left = 8
       Top = 96
-      Width = 85
+      Width = 86
       Height = 18
-      Caption = 'Download to:'
+      Caption = 'Cache folder:'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15
@@ -187,39 +198,65 @@ object Form1: TForm1
       Font.Style = []
       ParentFont = False
     end
-    object Edit_dburl: TEdit
-      Left = 72
-      Top = 32
-      Width = 572
-      Height = 24
-      TabOrder = 0
-      Text = 
-        'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main' +
-        '/DB.csv'
-    end
-    object Edit_libdownloadto: TXPDirectoryEdit
+    object Edit_cacheDir: TXPDirectoryEdit
       Left = 104
-      Top = 96
+      Top = 94
       Width = 540
       Height = 24
+      Color = clWindowFrame
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       StretchButtonImage = False
-      TabOrder = 1
+      TabOrder = 0
       Text = 'C:\Users\Shahi\Desktop\TEST_AD_LIB\'
+      OnExit = Form_saveSettings
     end
     object Edit_dbpath: TXPFileNameEdit
       Left = 72
-      Top = 64
+      Top = 62
       Width = 572
       Height = 24
+      Color = clGrayText
       FilterIndex = 0
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       StretchButtonImage = False
-      TabOrder = 2
+      TabOrder = 1
       Text = 'C:\Users\Shahi\Desktop\TEST_AD_LIB\DB.csv'
+      OnExit = Form_saveSettings
+    end
+    object Edit_dburl: TXPEdit
+      Left = 72
+      Top = 30
+      Width = 564
+      Height = 24
+      Ctl3D = True
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentColor = True
+      ParentCtl3D = False
+      ParentFont = False
+      TabOrder = 2
+      Text = 
+        'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main' +
+        '/DB.csv'
+      OnExit = Form_saveSettings
     end
   end
   object GroupBox2: TGroupBox
     Left = 12
-    Top = 717
+    Top = 733
     Width = 664
     Height = 161
     Caption = 'DB Generator'
@@ -284,34 +321,38 @@ object Form1: TForm1
       ExplicitTop = 136
       ExplicitHeight = 100
     end
-    object Edit_liburl: TEdit
-      Left = 84
-      Top = 88
-      Width = 560
-      Height = 24
-      TabOrder = 0
-      Text = 
-        'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main' +
-        '/'
-    end
     object Edit_dbsaveto: TXPFileNameEdit
-      Left = 84
-      Top = 56
-      Width = 560
+      Left = 88
+      Top = 54
+      Width = 556
       Height = 24
       FilterIndex = 0
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       StretchButtonImage = False
-      TabOrder = 1
+      TabOrder = 0
       Text = 'C:\Users\Shahi\Desktop\TEST_AD_LIB\DB.csv'
+      OnExit = Form_saveSettings
     end
     object Edit_libsearchdir: TXPDirectoryEdit
       Left = 88
-      Top = 24
+      Top = 22
       Width = 412
       Height = 24
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       StretchButtonImage = False
-      TabOrder = 2
+      TabOrder = 1
       Text = 'C:\Users\Shahi\Downloads\Altium-Library-main\Altium-Library-main'
+      OnExit = Form_saveSettings
     end
     object Button_dbgenerate: TButton
       Left = 508
@@ -319,7 +360,7 @@ object Form1: TForm1
       Width = 136
       Height = 32
       Caption = 'DB Generate'
-      TabOrder = 3
+      TabOrder = 2
       OnClick = Button_dbgenerateClick
     end
     object XPSpinEdit_maxfilesno: TXPSpinEdit
@@ -327,13 +368,44 @@ object Form1: TForm1
       Top = 24
       Width = 56
       Height = 24
-      TabOrder = 4
+      TabOrder = 3
       Value = 500
+    end
+    object CheckBox_updateDB: TCheckBox
+      Left = 8
+      Top = 128
+      Width = 156
+      Height = 18
+      Caption = 'Update existing DB'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 4
+    end
+    object Edit_liburl: TXPEdit
+      Left = 88
+      Top = 86
+      Width = 556
+      Height = 24
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 5
+      Text = 
+        'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main' +
+        '/'
+      OnExit = Form_saveSettings
     end
   end
   object Memo1: TMemo
     Left = 12
-    Top = 890
+    Top = 906
     Width = 664
     Height = 127
     Color = clBlack
@@ -343,11 +415,88 @@ object Form1: TForm1
     Font.Name = 'Tahoma'
     Font.Style = []
     Lines.Strings = (
-      'Consule')
+      'Log')
     ParentFont = False
     ReadOnly = True
     ScrollBars = ssVertical
     TabOrder = 4
+  end
+  object GroupBox4: TGroupBox
+    Left = 696
+    Top = 8
+    Width = 326
+    Height = 568
+    Caption = 'Background process'
+    TabOrder = 5
+    object Label9: TLabel
+      Left = 8
+      Top = 32
+      Width = 272
+      Height = 16
+      Caption = 'For tool background, usage and shall not visible'
+    end
+    object Label10: TLabel
+      Left = 8
+      Top = 288
+      Width = 193
+      Height = 16
+      Caption = 'Setting ini file info for comparison'
+    end
+    object Label11: TLabel
+      Left = 8
+      Top = 160
+      Width = 163
+      Height = 16
+      Caption = 'DB file content for quick load'
+    end
+    object Label12: TLabel
+      Left = 8
+      Top = 104
+      Width = 142
+      Height = 16
+      Caption = 'DB file last modified time'
+    end
+    object Label13: TLabel
+      Left = 8
+      Top = 56
+      Width = 124
+      Height = 16
+      Caption = 'Load load DB file path'
+    end
+    object Memo_DB: TMemo
+      Left = 8
+      Top = 183
+      Width = 312
+      Height = 89
+      ReadOnly = True
+      ScrollBars = ssVertical
+      TabOrder = 0
+      WordWrap = False
+    end
+    object Info_lastLoadDBTimestamp: TEdit
+      Left = 8
+      Top = 128
+      Width = 312
+      Height = 24
+      TabOrder = 1
+    end
+    object Info_lastLoadDBPath: TEdit
+      Left = 8
+      Top = 72
+      Width = 312
+      Height = 24
+      TabOrder = 2
+    end
+    object Memo_settings: TMemo
+      Left = 8
+      Top = 312
+      Width = 312
+      Height = 89
+      ReadOnly = True
+      ScrollBars = ssVertical
+      TabOrder = 3
+      WordWrap = False
+    end
   end
   object MainMenu1: TMainMenu
     Left = 32
