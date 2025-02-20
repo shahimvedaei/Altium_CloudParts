@@ -388,7 +388,7 @@ begin
     StatusBar1.Panels[0].Text := 'Downloading...';
     RunPythonScript(args, res);
     StatusBar1.Panels[0].Text := 'Download completed.';
-    Memo1.Lines.Add('Download: ' + url + ', to ' + savePath + ' complited.');
+    Memo_log.Lines.Add('Download: ' + url + ', to ' + savePath + ' complited.');
 
 end;
 {..............................................................................}
@@ -748,7 +748,7 @@ begin
     files_max := XPSpinEdit_maxfilesno.Value;
     // TODO: altium does not update StatusBar1 as it is busy
     StatusBar1.Panels[0].Text := '';
-    Memo1.Clear;
+    Memo_log.Clear;
 
     if FileExists(dbPath) then
     begin
@@ -775,8 +775,8 @@ begin
                     GOTO postprocessing_label;
                 end;
                 files_count := files_count + 1;
-                Memo1.Clear;
-                Memo1.Lines.Add(IntToStr(files_count) + ': ' + LIB_files.Strings[I]);
+                Memo_log.Clear;
+                Memo_log.Lines.Add(IntToStr(files_count) + ': ' + LIB_files.Strings[I]);
                 ReadPCBLIB(LIB_files.Strings[I], dbPath, LIB_path);
             End;
     Finally
@@ -802,8 +802,8 @@ begin
                     GOTO postprocessing_label;
                 end;
                 files_count := files_count + 1;
-                Memo1.Clear;
-                Memo1.Lines.Add(IntToStr(files_count) + ': ' + LIB_files.Strings[I]);
+                Memo_log.Clear;
+                Memo_log.Lines.Add(IntToStr(files_count) + ': ' + LIB_files.Strings[I]);
                 ReadSCHLIB(LIB_files.Strings[I], dbPath, LIB_path);
             End;
     Finally
@@ -817,15 +817,15 @@ postprocessing_label:
     // Due to the limination of Altium Delphi language we need to perfom some processing by python
     DBPostprocessing(dbPath, LIB_path);
 
-    Memo1.Clear;
-    Memo1.Lines.Add('Total Lib Files: ' + IntToStr(files_count));
+    Memo_log.Clear;
+    Memo_log.Lines.Add('Total Lib Files: ' + IntToStr(files_count));
 
     if FileExists(dbPath) then
     begin
         // Clear the listview after postprocessing
         Edit_filter.Text := '*';
         ListView1.Items.Clear;
-        Memo1.Lines.Add('DB saved: ' + dbPath);
+        Memo_log.Lines.Add('DB saved: ' + dbPath);
         StatusBar1.Panels[0].Text := 'DB file has been created!';
         MessageDlg('DB file has been created!', mtInformation, MkSet(mbOK), 0);
     end
@@ -1216,6 +1216,14 @@ end;
 procedure TForm1.Button_aboutClick(Sender: TObject);
 begin
     MessageDlg('Maintained by: Shahim Vedaei <shahim.vedaei@gmail.com>', mtInformation, MkSet(mbOK), 0);
+end;
+{..............................................................................}
+
+{..............................................................................}
+// UI: exit
+procedure TForm1.NExit1Click(Sender: TObject);
+begin
+   Form1.Close;
 end;
 
 {................................................................................................................}

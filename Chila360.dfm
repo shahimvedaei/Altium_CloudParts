@@ -55,7 +55,7 @@ object Form1: TForm1
       Width = 84
       Height = 25
       Caption = 'Add Lib'
-      TabOrder = 0
+      TabOrder = 5
       OnClick = Button_libaddClick
     end
     object Button_find: TButton
@@ -86,7 +86,7 @@ object Form1: TForm1
       Width = 64
       Height = 25
       Caption = 'Fetch DB'
-      TabOrder = 3
+      TabOrder = 6
       OnClick = Button_dbfetchClick
     end
     object ListView1: TListView
@@ -111,14 +111,14 @@ object Form1: TForm1
       ReadOnly = True
       RowSelect = True
       ShowWorkAreas = True
-      TabOrder = 4
+      TabOrder = 7
     end
     object Edit_filter: TEdit
       Left = 136
       Top = 24
       Width = 244
       Height = 24
-      TabOrder = 5
+      TabOrder = 0
       Text = '*'
     end
     object Button_libdownload: TButton
@@ -127,7 +127,7 @@ object Form1: TForm1
       Width = 104
       Height = 25
       Caption = 'Download'
-      TabOrder = 6
+      TabOrder = 4
       OnClick = Button_libdownloadClick
     end
     object Button_place: TButton
@@ -136,7 +136,7 @@ object Form1: TForm1
       Width = 188
       Height = 25
       Caption = 'Place'
-      TabOrder = 7
+      TabOrder = 3
       OnClick = Button_placeClick
     end
     object ProgressBar1: TProgressBar
@@ -210,7 +210,7 @@ object Form1: TForm1
       Font.Style = []
       ParentFont = False
       StretchButtonImage = False
-      TabOrder = 0
+      TabOrder = 2
       Text = 'C:\'
       OnExit = Form_saveSettings
     end
@@ -246,7 +246,7 @@ object Form1: TForm1
       ParentColor = True
       ParentCtl3D = False
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 0
       Text = 
         'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main' +
         '/DB.csv'
@@ -334,7 +334,7 @@ object Form1: TForm1
       Options = [ofHideReadOnly, ofPathMustExist, ofEnableSizing]
       ParentFont = False
       StretchButtonImage = False
-      TabOrder = 0
+      TabOrder = 1
       Text = 'C:\DB.csv'
       OnExit = Form_saveSettings
     end
@@ -350,7 +350,7 @@ object Form1: TForm1
       Font.Style = []
       ParentFont = False
       StretchButtonImage = False
-      TabOrder = 1
+      TabOrder = 0
       Text = 'C:\Users\Shahi\Downloads\Altium-Library-main\Altium-Library-main'
       OnExit = Form_saveSettings
     end
@@ -360,7 +360,7 @@ object Form1: TForm1
       Width = 136
       Height = 32
       Caption = 'DB Generate'
-      TabOrder = 2
+      TabOrder = 5
       OnClick = Button_dbgenerateClick
     end
     object XPSpinEdit_maxfilesno: TXPSpinEdit
@@ -368,7 +368,7 @@ object Form1: TForm1
       Top = 24
       Width = 56
       Height = 24
-      TabOrder = 3
+      TabOrder = 4
       Value = 500
     end
     object CheckBox_updateDB: TCheckBox
@@ -383,7 +383,7 @@ object Form1: TForm1
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 3
     end
     object Edit_liburl: TXPEdit
       Left = 88
@@ -396,14 +396,14 @@ object Form1: TForm1
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 5
+      TabOrder = 2
       Text = 
         'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main' +
         '/'
       OnExit = Form_saveSettings
     end
   end
-  object Memo1: TMemo
+  object Memo_log: TMemo
     Left = 12
     Top = 906
     Width = 664
@@ -503,11 +503,9 @@ object Form1: TForm1
     Top = 104
     object NFile1: TMenuItem
       Caption = 'File'
-      object NSettings1: TMenuItem
-        Caption = 'Settings'
-      end
       object NExit1: TMenuItem
         Caption = 'Exit'
+        OnClick = NExit1Click
       end
     end
     object NAbout1: TMenuItem
