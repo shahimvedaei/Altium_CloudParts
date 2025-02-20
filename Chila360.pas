@@ -238,6 +238,11 @@ begin
                  if settings_list[1] <> Edit_dbpath.Text then
                     updateFlag := True;
               end;
+           'cacheDir':
+              begin
+                 if settings_list[1] <> Edit_cacheDir.Text then
+                    updateFlag := True;
+              end;
            'libsearchdir':
               begin
                  if settings_list[1] <> Edit_libsearchdir.Text then
@@ -281,6 +286,7 @@ begin
         // Write values to the INI file
         Ini.WriteString('Windows', 'dburl', Edit_dburl.Text);
         Ini.WriteString('Windows', 'dbPath', Edit_dbpath.Text);
+        Ini.WriteString('Windows', 'cacheDir', Edit_cacheDir.Text);
         Ini.WriteString('Windows', 'libsearchdir', Edit_libsearchdir.Text);
         Ini.WriteString('Windows', 'libdbsaveto', Edit_dbsaveto.Text);
         Ini.WriteString('Windows', 'liburl', Edit_liburl.Text);
@@ -311,9 +317,10 @@ begin
        try
          // Read values, with default values if the key doesn't exist
          Edit_dburl.Text := Ini.ReadString('Windows', 'dburl', 'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main/DB.csv');
-         Edit_dbpath.Text := Ini.ReadString('Windows', 'dbPath', 'D:\');
-         Edit_libsearchdir.Text := Ini.ReadString('Windows', 'libsearchdir', 'D:\');
-         Edit_dbsaveto.Text := Ini.ReadString('Windows', 'libdbsaveto', 'D:\');
+         Edit_dbpath.Text := Ini.ReadString('Windows', 'dbPath', 'C:\DB.csv');
+         Edit_cacheDir.Text := Ini.ReadString('Windows', 'cacheDir', 'C:\');
+         Edit_libsearchdir.Text := Ini.ReadString('Windows', 'libsearchdir', 'C:\');
+         Edit_dbsaveto.Text := Ini.ReadString('Windows', 'libdbsaveto', 'C:\DB.csv');
          Edit_liburl.Text := Ini.ReadString('Windows', 'liburl', 'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main/');
          // load settings to memo_settings for future check analysis
          Memo_settings.Lines.LoadFromFile(iniFile);

@@ -50,11 +50,11 @@ object Form1: TForm1
       ParentFont = False
     end
     object Button_libadd: TButton
-      Left = 512
+      Left = 564
       Top = 544
-      Width = 136
+      Width = 84
       Height = 25
-      Caption = 'Add Lib to project'
+      Caption = 'Add Lib'
       TabOrder = 0
       OnClick = Button_libaddClick
     end
@@ -122,9 +122,9 @@ object Form1: TForm1
       Text = '*'
     end
     object Button_libdownload: TButton
-      Left = 384
+      Left = 452
       Top = 544
-      Width = 124
+      Width = 104
       Height = 25
       Caption = 'Download'
       TabOrder = 6
@@ -133,7 +133,7 @@ object Form1: TForm1
     object Button_place: TButton
       Left = 16
       Top = 544
-      Width = 75
+      Width = 188
       Height = 25
       Caption = 'Place'
       TabOrder = 7
@@ -211,7 +211,7 @@ object Form1: TForm1
       ParentFont = False
       StretchButtonImage = False
       TabOrder = 0
-      Text = 'C:\Users\Shahi\Desktop\TEST_AD_LIB\'
+      Text = 'C:\'
       OnExit = Form_saveSettings
     end
     object Edit_dbpath: TXPFileNameEdit
@@ -229,7 +229,7 @@ object Form1: TForm1
       ParentFont = False
       StretchButtonImage = False
       TabOrder = 1
-      Text = 'C:\Users\Shahi\Desktop\TEST_AD_LIB\DB.csv'
+      Text = 'C:\DB.csv'
       OnExit = Form_saveSettings
     end
     object Edit_dburl: TXPEdit
@@ -331,10 +331,11 @@ object Form1: TForm1
       Font.Height = -13
       Font.Name = 'Tahoma'
       Font.Style = []
+      Options = [ofHideReadOnly, ofPathMustExist, ofEnableSizing]
       ParentFont = False
       StretchButtonImage = False
       TabOrder = 0
-      Text = 'C:\Users\Shahi\Desktop\TEST_AD_LIB\DB.csv'
+      Text = 'C:\DB.csv'
       OnExit = Form_saveSettings
     end
     object Edit_libsearchdir: TXPDirectoryEdit
