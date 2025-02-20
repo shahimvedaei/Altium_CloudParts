@@ -893,6 +893,11 @@ begin
    dbColumns := TStringList.Create;  // Create a TStringList to handle CSV values
    dbColumns.Delimiter := ',';  // Set CSV delimiter (comma)
    dbColumns.StrictDelimiter := True;  // Avoid spaces as delimiters
+   // TODO: need future fix
+   // Delphi create a new thread for each click, so if the user click multiple times
+   // before the previous thread ends, a new thread will be created. However, the previous
+   // thread is blocked, after the finishing the 2nd thread, the 1st thread continues.
+   Button_find.Enabled := False;
 
    // line 0 is header info CSV file
    dbColumns.DelimitedText := Memo_DB.Lines[0];
@@ -938,6 +943,7 @@ begin
      end; // if Pos
    end; // for Memo_DB.Lines.Count
    dbColumns.Free;
+   Button_find.Enabled := True;
 
 end;
 {..............................................................................}
