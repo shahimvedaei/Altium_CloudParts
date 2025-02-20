@@ -16,8 +16,7 @@
     ----------------------------------------------------------------------------------------------------------
     PRI  |  Description
     ----------------------------------------------------------------------------------------------------------
-    1    |   Use TRY to read/write to csv file, as it may not open properly and throw an error.
-    2    |   When we press find the previous search should be halted, otherwise, on large DB we have issue.
+    1    |   Fectch DB needs to modify so that python save the file without knowing the saved file name
     2    |   .package what is this? in parameters
     2    |   Cleancoding
     4    |   Updateing existing DB based on last-modified field
@@ -26,6 +25,7 @@
     4    |   Investigate the use of DBLib, what are the limitations?
     4    |   Change the color/font of the match text in listView
     4    |   Load/Save from/to ini file more systematic. ex. read a list of updated parameter, then load/save accordingly.
+    4    |   When we press find the previous search should be halted, otherwise, on large DB we have issue.
 
 ................................................................................................................}
 
@@ -512,6 +512,14 @@ var
     i, j: Integer;
     Line: string;
 begin
+
+    // Check if file is in use by other applications
+    while IsFileInUse(FileName) = True do
+    begin
+        if MessageDlg('DB file is open by other application, please close and retry: ' + FileName, mtWarning, MkSet(mbRetry, mbCancel), 0) = mrCancel then
+            exit;
+    end;
+
     AssignFile(CSVFile, FileName);
     try
         Rewrite(CSVFile);
@@ -750,6 +758,12 @@ begin
     StatusBar1.Panels[0].Text := '';
     Memo_log.Clear;
 
+    // Check path
+    if not DirectoryExists(ExtractFileDir(dbPath)) then
+    begin
+        MessageDlg('Directory to save DB does not exist.' + ExtractFileDir(dbPath), mtError, MkSet(mbOK), 0);
+        exit;
+    end;
     if FileExists(dbPath) then
     begin
         if MessageDlg('DB file exists. Do you want to overwrite it?', mtConfirmation, MkSet(mbYes, mbNo), 0) = mrNo then
@@ -855,10 +869,15 @@ begin
    dbPath := Edit_dbpath.Text;
    FilterMask := Edit_filter.Text;
 
-   // Check existence of DB
+   // Check DB file
     if not FileExists(dbPath) then
     begin
        MessageDlg('DB file does not exist: ' + dbPath, mtError, MkSet(mbOK), 0);
+       exit;
+    end;
+    if IsFileInUse(dbPath) then
+    begin
+       MessageDlg('DB file is open by other application, please close it: ' + dbPath, mtError, MkSet(mbOK), 0);
        exit;
     end;
 
@@ -1081,7 +1100,7 @@ begin
              begin
                  MessageDlg('Cache dir does not exist.', mtError, MkSet(mbOK), 0);
                  exit;
-             end;
+             end; // if not DirectoryExists
              // Auto download
              if not FileExists(libPath) then
              begin
@@ -1091,84 +1110,98 @@ begin
                   end
                   else
                       exit;
-             end;
-         end;
+             end; // if not FileExists
+         end; // if (libType = 'SCHLIB') or (libType = 'PCBLIB')
 
 
          // SCH component placement
          if (libType = 'SCHLIB') then
          begin
-              SchDoc := SchServer.GetCurrentSchDocument;
-              if SchDoc = nil then
-              begin
-                  MessageDlg('Please open a SCH document.', mtInformation, MkSet(mbOK), 0);
-                  Exit;
-              end;
+              try
+                  Document := Client.OpenDocument('SCHLIB', libPath);
+                  if Document <> Nil Then
+                  Begin
+                      // Hint: document shall be opened first, otherwise schserver maynot be running.
+                      SchDoc := SchServer.GetCurrentSchDocument;
+                      if SchDoc = nil then
+                      begin
+                          MessageDlg('Please open a SCH document.', mtInformation, MkSet(mbOK), 0);
+                          Exit;
+                      end;
 
-              Document := Client.OpenDocument('SCHLIB', libPath);
-              if Document <> Nil Then
-              Begin
-                  SchSel := SchServer.GetSchDocumentByPath(Document.FileName);
-                  if SchSel <> Nil Then
-                  begin
-                       schCom := SchSel.GetState_SchComponentByLibRef(libComName);
-                       if schCom <> Nil Then
-                       Begin
-                            // Method 1:
-                            // TODO: It used to work at first, but never again
-                            // - why this method does not work anymore?
-                            // ResetParameters;
-                            // AddStringParameter('FileName', libPath);
-                            // AddStringParameter('id', libComName);
-                            // RunProcess('SCH:PlaceComponent');
+                      SchSel := SchServer.GetSchDocumentByPath(Document.FileName);
+                      if SchSel <> Nil Then
+                      begin
+                           schCom := SchSel.GetState_SchComponentByLibRef(libComName);
+                           if schCom <> Nil Then
+                           Begin
+                                // Method 1:
+                                // TODO: It used to work at first, but never again
+                                // - why this method does not work anymore?
+                                // ResetParameters;
+                                // AddStringParameter('FileName', libPath);
+                                // AddStringParameter('id', libComName);
+                                // RunProcess('SCH:PlaceComponent');
 
-                            // Method 2:
-                            // schCom.SetState_Orientation := 0;
-                            // Select the PartID if applicable
-                            if schCom.IsMultiPartComponent then
-                                 schCom.CurrentPartID := SelectComponetPartID(schCom);
+                                // Method 2:
+                                // schCom.SetState_Orientation := 0;
+                                // Select the PartID if applicable
+                                if schCom.IsMultiPartComponent then
+                                     schCom.CurrentPartID := SelectComponetPartID(schCom);
 
-                            // schCom.SourceLibraryName := name?; // TODO: why source are different than the current libname?
-                            SchDoc.AddSchObject(schCom);
-                            SchDoc.GraphicallyInvalidate;
-                            ResetParameters;
-                            RunProcess('Sch:DeSelect');
-                            schCom.Selection := True;
-                            // Cut and Paste the Selected Part to Attach the part to the Cursor
-                            RunProcess ('Sch:Cut');
-                            ResetParameters;
-                            RunProcess ('Sch:Paste');
-                            ResetParameters;
+                                // schCom.SourceLibraryName := name?; // TODO: why source are different than the current libname?
+                                SchDoc.AddSchObject(schCom);
+                                SchDoc.GraphicallyInvalidate;
+                                ResetParameters;
+                                RunProcess('Sch:DeSelect');
+                                schCom.Selection := True;
+                                // Cut and Paste the Selected Part to Attach the part to the Cursor
+                                RunProcess ('Sch:Cut');
+                                ResetParameters;
+                                RunProcess ('Sch:Paste');
+                                ResetParameters;
 
-                            // USAGE: Set placement position (modify as needed)
-                            // SCHLIB_component.Location := Point(MilsToCoord(500), MilsToCoord(500)); // or := Mouse.CursorPos;
-                            // schCom_new.MoveToXY(X, Y);
-                            // Add the component to the schematic
-                            // SchDoc.RegisterSchObjectInContainer(SCHLIB_component);
-                            // Refresh schematic to display the new component
-                            //SchDoc.GraphicallyInvalidate;
-                            //schCom_new.Selection := True;
-                       end // if schCom
-                       else MessageDlg('Component does not exist: ' + libComName, mtError, MkSet(mbOK), 0);
-                  end // If SchSel
-                  else MessageDlg('Failed to open schlib: ' + libPath , mtError, MkSet(mbOK), 0);
-                  // Close document before leave
-                  Client.CloseDocument(Document);
-              end // if Document
-              else MessageDlg('Lib does not exist: ' + libPath, mtError, MkSet(mbOK), 0);
+                                // USAGE: Set placement position (modify as needed)
+                                // SCHLIB_component.Location := Point(MilsToCoord(500), MilsToCoord(500)); // or := Mouse.CursorPos;
+                                // schCom_new.MoveToXY(X, Y);
+                                // Add the component to the schematic
+                                // SchDoc.RegisterSchObjectInContainer(SCHLIB_component);
+                                // Refresh schematic to display the new component
+                                //SchDoc.GraphicallyInvalidate;
+                                //schCom_new.Selection := True;
+                           end // if schCom
+                           else MessageDlg('Component does not exist: ' + libComName, mtError, MkSet(mbOK), 0);
+                      end // If SchSel
+                      else MessageDlg('Failed to open schlib: ' + libPath , mtError, MkSet(mbOK), 0);
+                  end // if Document
+                  else MessageDlg('Lib does not exist: ' + libPath, mtError, MkSet(mbOK), 0);
+              finally
+                   Client.CloseDocument(Document); // Close document before leave
+              end; // try
          end // if SCHLIB
+
 
          // PCB component placement
          else if (libType = 'PCBLIB') then
          begin
-              PcbBoard := PcbServer.GetCurrentPCBBoard;
-              if PcbBoard = nil then
-              begin
-                  MessageDlg('Please open a PCB document.', mtInformation, MkSet(mbOK), 0);
-                  Exit;
+              // Hint: as we are using PlaceComponent app to object placement, the Document shall be closed before that.
+              try
+                  Document := Client.OpenDocument('PCBLIB', libPath);
+                  if Document <> Nil Then
+                  begin
+                      // Hint: document shall be opened first, otherwise pcbserver maynot be running.
+                      PcbBoard := PcbServer.GetCurrentPCBBoard;
+                      if PcbBoard = nil then
+                      begin
+                          MessageDlg('Please open a PCB document.', mtInformation, MkSet(mbOK), 0);
+                          Exit;
+                      end;
+                  end // if Document <> Nil Then
+                  else MessageDlg('Lib does not exist: ' + libPath, mtError, MkSet(mbOK), 0);
+              finally
+                  Client.CloseDocument(Document); // Close document before leave
               end;
 
-              // TODO: Check is doc is present?
               // Investigate: Is it possible to use PcbServer.PCBObjectFactory instead?
               ResetParameters;
               AddStringParameter('FileName', libPath);
@@ -1203,6 +1236,7 @@ begin
               // AddStringParameter('FileName', libraryPath);
               // RunProcess('PCB:GotoLibraryComponent');
          end // if PCBLIB
+
          else // TYPE <> PCBLIB or SCHLIB
               MessageDlg('DB file is broken, please fecth a new one.', mtError, MkSet(mbOK), 0);
     end // if ListView1.Selected <> nil
