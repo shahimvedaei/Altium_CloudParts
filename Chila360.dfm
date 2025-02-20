@@ -28,7 +28,6 @@ object Form1: TForm1
       item
         Width = 50
       end>
-    ExplicitWidth = 1050
   end
   object GroupBox3: TGroupBox
     Left = 12

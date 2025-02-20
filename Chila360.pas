@@ -815,11 +815,12 @@ postprocessing_label:
 
     if FileExists(dbPath) then
     begin
-        // Reload the data to listview after postprocessing
-        LoadCSVToListView(dbPath);
+        // Clear the listview after postprocessing
+        Edit_filter.Text := '*';
+        ListView1.Items.Clear;
         Memo1.Lines.Add('DB saved: ' + dbPath);
-        StatusBar1.Panels[0].Text := 'DB file has created!';
-        ShowMessage('DB file has created!');
+        StatusBar1.Panels[0].Text := 'DB file has been created!';
+        MessageDlg('DB file has been created!', mtInformation, MkSet(mbOK), 0);
     end
     else
         MessageDlg('Failed to generate DB file: ' + dbPath, mtError, MkSet(mbOK), 0);
