@@ -12,10 +12,8 @@ import time
 import argparse
 import requests
 
-# python setup.py build_ext --inplace
-
+# How to generate .pyx file
 # cython --embed -o Chila360_utils.c Chila360_utils.pyx
-# gcc -shared -o Chila360_utils.dll Chila360_utils.c -I"D:\Anaconda\include" -L"D:\Anaconda\libs" -lpython311
 
 # TODO: this should be done automatically
 IND_PATH = 3
