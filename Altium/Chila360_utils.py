@@ -11,6 +11,7 @@ from pathlib import Path
 import time
 import argparse
 import requests
+from urllib.parse import urlparse
 
 # How to generate .pyx file
 # cython --embed -o Chila360_utils.c Chila360_utils.pyx
@@ -30,10 +31,14 @@ def download_url(url, saveto):
 		if not os.path.exists(baseDir):
 			os.makedirs(baseDir)
 
+		# Check if the file name is empty, so extract it from the URL
+		if len(os.path.basename(saveto)) == 0:
+			saveto = saveto + urlparse(url).path.split('/')[-1]
+
 		# TODO: Check if dir is created.
 		with open(saveto, "wb") as file:
 			file.write(response.content)
-		print("Downloaded successfully!", url)
+			print("Downloaded successfully!", url)
 	else:
 		print("Failed to download", url)
 
@@ -46,7 +51,6 @@ def db_postprocess(db_file, dir_base):
 	with open(db_file, newline="") as csvfile:
 		reader = list(csv.reader(csvfile))
 
-	
 		# Read and print the third column
 		for i in range(1, len(reader)):  # Start from index 1 to skip the header
 			if len(reader[i]) >= 3:  # Ensure the row has at least 2 columns
@@ -67,6 +71,7 @@ def db_postprocess(db_file, dir_base):
 	with open(db_file, "w", newline="") as csvfile:
 		writer = csv.writer(csvfile)
 		writer.writerows(reader)
+		print("Database file updated successfully!")
 
 
 def search_files(folder_path, filter, output):
@@ -84,6 +89,7 @@ def search_files(folder_path, filter, output):
 		for files in sch_files:
 			file.write(files + "\n")
 
+	print("result saved in: ", output)
 	return sch_files
 
 
@@ -114,15 +120,12 @@ def main():
 	# Check the action
 	if args.action == "search":   
 		search_files(args.path, args.filter, args.saveto)
-		print("result saved in: ", args.saveto)
 
 	elif args.action == "db_postprocess":
 		db_postprocess(args.db_file, args.lib_dir)
-		print("DB postprocess completed.")
 	
 	elif args.action == "download_url":
 		download_url(args.url, args.saveto)
-		print("DB download completed.")
 
 
 if __name__ == "__main__":

@@ -415,6 +415,7 @@ procedure TForm1.Button_dbfetchClick(Sender: TObject);
 var
     cacheDir :  String;
 begin
+    // TODO: user IncludeTrailingPathDelimiter instead
     cacheDir := utl_prepPathStr(Edit_cacheDir.Text, True);
     if not DirectoryExists(cacheDir) then
     begin
