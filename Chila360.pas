@@ -3,7 +3,7 @@
     Description:
         Altium Designer DelphiScript to generate a database of all components in the libraries with access to Git.
 
-    License:    MIT
+    License:    GPL
     Copywrite:  FEB 2025
     Version:    2.1
     Maintainer: Shahim Vedaei <shahim.vedaei@gmail.com>
@@ -16,7 +16,6 @@
     ----------------------------------------------------------------------------------------------------------
     PRI  |  Description
     ----------------------------------------------------------------------------------------------------------
-    1    |   Fectch DB needs to modify so that python save the file without knowing the saved file name
     2    |   .package what is this? in parameters
     2    |   Cleancoding
     3    |   User from the UI can select which parameters to be included in DB
