@@ -1,99 +1,67 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Width = 725
-  Height = 789
   HorzScrollBar.Visible = False
-  AutoScroll = True
-  Caption = 'Chila360 Online Lib Search'
-  Color = clGrayText
-  Constraints.MaxWidth = 725
-  Constraints.MinWidth = 725
+  Caption = 'Chila360 Cloud Lib Search'
+  ClientHeight = 648
+  ClientWidth = 682
+  Color = 2763306
+  Constraints.MaxHeight = 695
+  Constraints.MaxWidth = 700
+  Constraints.MinHeight = 695
+  Constraints.MinWidth = 700
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -13
   Font.Name = 'Tahoma'
   Font.Style = []
-  Menu = MainMenu1
   OldCreateOrder = False
   OnShow = Form_loadSettings
   PixelsPerInch = 120
   TextHeight = 16
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 1033
-    Width = 1022
+    Top = 629
+    Width = 682
     Height = 19
     Panels = <
       item
         Width = 50
       end>
+    ExplicitTop = 788
+    ExplicitWidth = 1726
   end
-  object GroupBox3: TGroupBox
+  object GroupBox_components: TGroupBox
     Left = 12
-    Top = 0
+    Top = 8
     Width = 664
-    Height = 583
-    Caption = 'Search'
+    Height = 560
+    Caption = 'Components'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 1
-    object Label1: TLabel
-      Left = 520
-      Top = 24
-      Width = 35
-      Height = 18
-      Caption = 'Filter:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -15
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
-    object Button_libadd: TButton
-      Left = 564
-      Top = 544
-      Width = 84
-      Height = 25
-      Caption = 'Add Lib'
-      TabOrder = 5
-      OnClick = Button_libaddClick
-    end
-    object Button_find: TButton
-      Left = 9
-      Top = 24
-      Width = 119
-      Height = 25
-      Caption = 'Find'
-      TabOrder = 1
-      OnClick = Button_findClick
-    end
     object ComboBox_filter: TComboBox
-      Left = 567
+      Left = 343
       Top = 24
-      Width = 89
+      Width = 69
       Height = 24
       ItemIndex = 0
-      TabOrder = 2
+      TabOrder = 1
       Text = 'All'
       Items.Strings = (
         'All'
         'PCBLIB'
         'SCHLIB')
     end
-    object Button_dbfetch: TButton
-      Left = 448
-      Top = 24
-      Width = 64
-      Height = 25
-      Caption = 'Fetch DB'
-      TabOrder = 6
-      OnClick = Button_dbfetchClick
-    end
     object ListView1: TListView
       Left = 16
       Top = 64
       Width = 632
-      Height = 456
+      Height = 432
       Color = clMenu
       Columns = <
         item
@@ -111,56 +79,86 @@ object Form1: TForm1
       ReadOnly = True
       RowSelect = True
       ShowWorkAreas = True
-      TabOrder = 7
+      TabOrder = 2
     end
     object Edit_filter: TEdit
-      Left = 136
+      Left = 16
       Top = 24
-      Width = 244
+      Width = 316
       Height = 24
       TabOrder = 0
       Text = '*'
     end
-    object Button_libdownload: TButton
-      Left = 452
-      Top = 544
-      Width = 104
-      Height = 25
-      Caption = 'Download'
-      TabOrder = 4
-      OnClick = Button_libdownloadClick
-    end
-    object Button_place: TButton
-      Left = 16
-      Top = 544
-      Width = 188
-      Height = 25
-      Caption = 'Place'
-      TabOrder = 3
-      OnClick = Button_placeClick
-    end
     object ProgressBar1: TProgressBar
       Left = 20
-      Top = 528
+      Top = 504
       Width = 624
       Height = 7
       Step = 1
-      TabOrder = 8
+      TabOrder = 3
+    end
+    object Button_libdownload: TXPButton
+      Left = 452
+      Top = 520
+      Width = 100
+      Height = 24
+      Caption = 'DOWNLOAD'
+      Color = 7646658
+      ParentColor = False
+      TabOrder = 4
+      TabStop = False
+      OnClick = Button_libdownloadClick
+    end
+    object Button_libadd: TXPButton
+      Left = 564
+      Top = 520
+      Width = 85
+      Height = 24
+      Caption = 'ADD LIB'
+      Color = 7646658
+      ParentColor = False
+      TabOrder = 5
+      TabStop = False
+      OnClick = Button_libaddClick
+    end
+    object Button_find: TXPButton
+      Left = 508
+      Top = 23
+      Width = 140
+      Height = 32
+      Caption = 'SEARCH'
+      Color = 7646658
+      ParentColor = False
+      TabOrder = 6
+      TabStop = False
+      OnClick = Button_findClick
+    end
+    object Button_place: TXPButton
+      Left = 24
+      Top = 520
+      Width = 228
+      Height = 24
+      Caption = 'PLACE'
+      Color = 7646658
+      ParentColor = False
+      TabOrder = 7
+      TabStop = False
+      OnClick = Button_placeClick
     end
   end
-  object GroupBox1: TGroupBox
-    Left = 12
-    Top = 592
+  object GroupBox_settings: TGroupBox
+    Left = 692
+    Top = 8
     Width = 664
-    Height = 132
+    Height = 176
     Caption = 'Settings'
-    Color = clGrayText
+    Color = 7646658
     ParentBackground = False
     ParentColor = False
     TabOrder = 2
     object Label4: TLabel
-      Left = 8
-      Top = 96
+      Left = 16
+      Top = 136
       Width = 86
       Height = 18
       Caption = 'Cache folder:'
@@ -172,8 +170,8 @@ object Form1: TForm1
       ParentFont = False
     end
     object Label2: TLabel
-      Left = 8
-      Top = 32
+      Left = 16
+      Top = 72
       Width = 55
       Height = 18
       Caption = 'DB URL:'
@@ -185,8 +183,8 @@ object Form1: TForm1
       ParentFont = False
     end
     object Label8: TLabel
-      Left = 8
-      Top = 64
+      Left = 16
+      Top = 104
       Width = 58
       Height = 18
       Caption = 'DB path:'
@@ -198,8 +196,8 @@ object Form1: TForm1
       ParentFont = False
     end
     object Edit_cacheDir: TXPDirectoryEdit
-      Left = 104
-      Top = 94
+      Left = 112
+      Top = 134
       Width = 540
       Height = 24
       Color = clWindowFrame
@@ -215,8 +213,8 @@ object Form1: TForm1
       OnExit = Form_saveSettings
     end
     object Edit_dbpath: TXPFileNameEdit
-      Left = 72
-      Top = 62
+      Left = 80
+      Top = 102
       Width = 572
       Height = 24
       Color = clGrayText
@@ -233,8 +231,8 @@ object Form1: TForm1
       OnExit = Form_saveSettings
     end
     object Edit_dburl: TXPEdit
-      Left = 72
-      Top = 30
+      Left = 80
+      Top = 70
       Width = 564
       Height = 24
       Ctl3D = True
@@ -252,13 +250,25 @@ object Form1: TForm1
         '/DB.csv'
       OnExit = Form_saveSettings
     end
+    object Button_dbfetch: TButton
+      Left = 524
+      Top = 24
+      Width = 116
+      Height = 25
+      Caption = 'Download DB'
+      TabOrder = 3
+      OnClick = Button_dbfetchClick
+    end
   end
-  object GroupBox2: TGroupBox
-    Left = 12
-    Top = 733
+  object GroupBox_DBGenerator: TGroupBox
+    Left = 692
+    Top = 192
     Width = 664
-    Height = 161
+    Height = 304
     Caption = 'DB Generator'
+    Color = 7646658
+    ParentBackground = False
+    ParentColor = False
     TabOrder = 3
     object Label5: TLabel
       Left = 8
@@ -315,7 +325,7 @@ object Form1: TForm1
     object XPSplitter1: TXPSplitter
       Left = 2
       Top = 18
-      Height = 141
+      Height = 284
       ExplicitLeft = 104
       ExplicitTop = 136
       ExplicitHeight = 100
@@ -402,32 +412,32 @@ object Form1: TForm1
         '/'
       OnExit = Form_saveSettings
     end
-  end
-  object Memo_log: TMemo
-    Left = 12
-    Top = 906
-    Width = 664
-    Height = 127
-    Color = clBlack
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWhite
-    Font.Height = -13
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    Lines.Strings = (
-      'Log')
-    ParentFont = False
-    ReadOnly = True
-    ScrollBars = ssVertical
-    TabOrder = 4
+    object Memo_log: TMemo
+      Left = 10
+      Top = 187
+      Width = 640
+      Height = 112
+      Color = clBlack
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      Lines.Strings = (
+        'Log')
+      ParentFont = False
+      ReadOnly = True
+      ScrollBars = ssVertical
+      TabOrder = 6
+    end
   end
   object GroupBox4: TGroupBox
-    Left = 696
-    Top = 8
+    Left = 1368
+    Top = 168
     Width = 326
-    Height = 568
+    Height = 408
     Caption = 'Background process'
-    TabOrder = 5
+    TabOrder = 4
     object Label9: TLabel
       Left = 8
       Top = 32
@@ -498,22 +508,151 @@ object Form1: TForm1
       WordWrap = False
     end
   end
-  object MainMenu1: TMainMenu
-    Left = 32
-    Top = 104
-    object NFile1: TMenuItem
-      Caption = 'File'
-      object NExit1: TMenuItem
-        Caption = 'Exit'
-        OnClick = NExit1Click
-      end
+  object XPButtonEx1: TXPButtonEx
+    Left = 376
+    Top = 648
+    Width = 0
+    Height = 0
+    BitmapIndex = 0
+    DownBitmapIndex = 0
+    Caption = 'XPButtonEx1'
+    ParentColor = False
+    TabOrder = 5
+    TabStop = False
+  end
+  object Button_selComponentsPage: TXPButton
+    Left = 16
+    Top = 578
+    Width = 150
+    Height = 40
+    Caption = 'Components'
+    Color = 7646658
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 6
+    TabStop = False
+    OnClick = Button_selComponentsPageClick
+  end
+  object Button_selSettingsPage: TXPButton
+    Left = 187
+    Top = 578
+    Width = 150
+    Height = 40
+    Caption = 'Settings'
+    Color = 7646658
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 7
+    TabStop = False
+    OnClick = Button_selSettingsPageClick
+  end
+  object Button_selDBGeneratorPage: TXPButton
+    Left = 355
+    Top = 578
+    Width = 150
+    Height = 40
+    Caption = 'DataBase Gen'
+    Color = 7646658
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 8
+    TabStop = False
+    OnClick = Button_selDBGeneratorPageClick
+  end
+  object Button_selInfoPage: TXPButton
+    Left = 525
+    Top = 578
+    Width = 150
+    Height = 40
+    Caption = 'Info'
+    Color = 7646658
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -15
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 9
+    TabStop = False
+    OnClick = Button_selInfoPageClick
+  end
+  object GroupBox_info: TGroupBox
+    Left = 1364
+    Top = 16
+    Width = 664
+    Height = 144
+    Caption = 'Info'
+    Color = 7646658
+    ParentBackground = False
+    ParentColor = False
+    TabOrder = 10
+    object Label1: TLabel
+      Left = 48
+      Top = 40
+      Width = 190
+      Height = 18
+      Caption = 'Chila360 Cloud Library Search'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
     end
-    object NAbout1: TMenuItem
-      Caption = 'Help'
-      object Button_about: TMenuItem
-        Caption = 'About'
-        OnClick = Button_aboutClick
-      end
+    object Label14: TLabel
+      Left = 48
+      Top = 88
+      Width = 171
+      Height = 18
+      Caption = 'Maintainer: Shahim Vedaei'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label15: TLabel
+      Left = 48
+      Top = 112
+      Width = 218
+      Height = 18
+      Caption = 'Email: Shahim.Vedaei@gmail.com'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label16: TLabel
+      Left = 48
+      Top = 64
+      Width = 78
+      Height = 18
+      Caption = 'Version: 2.1'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
     end
   end
 end

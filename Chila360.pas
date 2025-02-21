@@ -1259,19 +1259,54 @@ end;
 {..............................................................................}
 
 {..............................................................................}
-// UI: Button_aboutClick
-procedure TForm1.Button_aboutClick(Sender: TObject);
+procedure TForm1.Button_selComponentsPageClick(Sender: TObject);
 begin
-    MessageDlg('Maintained by: Shahim Vedaei <shahim.vedaei@gmail.com>', mtInformation, MkSet(mbOK), 0);
+    GroupBox_components.Visible := True;
+    GroupBox_settings.Visible := False;
+    GroupBox_DBGenerator.Visible := False;
+    GroupBox_info.Visible := False;
+
+    GroupBox_components.Left := 12;
+    GroupBox_components.Top := 8;
 end;
 {..............................................................................}
 
 {..............................................................................}
-// UI: exit
-procedure TForm1.NExit1Click(Sender: TObject);
+procedure TForm1.Button_selSettingsPageClick(Sender: TObject);
 begin
-   Form1.Close;
-end;
+    GroupBox_components.Visible := False;
+    GroupBox_settings.Visible := True;
+    GroupBox_DBGenerator.Visible := False;
+    GroupBox_info.Visible := False;
 
+    GroupBox_settings.Left := 12;
+    GroupBox_settings.Top := 8;
+end;
+{..............................................................................}
+
+{..............................................................................}
+procedure TForm1.Button_selDBGeneratorPageClick(Sender: TObject);
+begin
+    GroupBox_components.Visible := False;
+    GroupBox_settings.Visible := False;
+    GroupBox_DBGenerator.Visible := True;
+    GroupBox_info.Visible := False;
+
+    GroupBox_DBGenerator.Left := 12;
+    GroupBox_DBGenerator.Top := 8;
+end;
+{..............................................................................}
+
+{..............................................................................}
+
+procedure TForm1.Button_selInfoPageClick(Sender: TObject);
+begin
+    GroupBox_components.Visible := False;
+    GroupBox_settings.Visible := False;
+    GroupBox_DBGenerator.Visible := False;
+    GroupBox_info.Visible := True;
+
+    GroupBox_info.Left := 12;
+    GroupBox_info.Top := 8;
+end;
 {................................................................................................................}
-
