@@ -19,6 +19,7 @@
     1    |   Fectch DB needs to modify so that python save the file without knowing the saved file name
     2    |   .package what is this? in parameters
     2    |   Cleancoding
+    3    |   User from the UI can select which parameters to be included in DB
     4    |   Updateing existing DB based on last-modified field
     4    |   Check the output of RunApplicationAndWAit
     4    |   Investigate DLL usage
@@ -348,9 +349,19 @@ var
 begin
     OutputFile := '.\output.txt';
     // Command to run Python script and redirect output to a file
-    pyExe := 'python';
-    pyScript := '"' + ExtractFilePath(ParamStr(0)) + 'Chila360_utils.py"';
+    pyExe := 'pythonw';
+    pyScript := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + 'Chila360_utils.py';
+
+    // Check existence of utility script
+    if not FileExists(pyScript) then
+    begin
+        MessageDlg('Utility script is missing, please copy to: ' + pyScript, mtError, MkSet(mbOK), 0);
+        exit;
+    end;
+
+    pyScript := '"' + pyScript + '"';
     Command := pyExe + ' ' + pyScript + ' ' + args;
+
     // Run the Python script using RunApplication
     RunApplicationAndWAit(Command, 100000);
 
@@ -389,6 +400,7 @@ begin
     RunPythonScript(args, res);
     StatusBar1.Panels[0].Text := 'Download completed.';
     Memo_log.Lines.Add('Download: ' + url + ', to ' + savePath + ' complited.');
+    MessageDlg('Download completed' , mtInformation, MkSet(mbOK), 0);
 
 end;
 {..............................................................................}
@@ -419,7 +431,7 @@ begin
     cacheDir := utl_prepPathStr(Edit_cacheDir.Text, True);
     if not DirectoryExists(cacheDir) then
     begin
-        Showmessage('ERROR: Cache dir does not exist.');
+        MessageDlg('Cache dir does not exist.' , mtError, MkSet(mbOK), 0);
         exit;
     end;
 
@@ -517,7 +529,7 @@ begin
     // Check if file is in use by other applications
     while IsFileInUse(FileName) = True do
     begin
-        if MessageDlg('DB file is open by other application, please close and retry: ' + FileName, mtWarning, MkSet(mbRetry, mbCancel), 0) = mrCancel then
+        if MessageDlg('The DB file is open in another application. please close it and try again: ' + FileName, mtWarning, MkSet(mbRetry, mbCancel), 0) = mrCancel then
             exit;
     end;
 
@@ -878,7 +890,7 @@ begin
     end;
     if IsFileInUse(dbPath) then
     begin
-       MessageDlg('DB file is open by other application, please close it: ' + dbPath, mtError, MkSet(mbOK), 0);
+       MessageDlg('The DB file is open in another application. Please close it: ' + dbPath, mtError, MkSet(mbOK), 0);
        exit;
     end;
 
@@ -910,6 +922,7 @@ begin
    ListView1.ViewStyle := vsReport;
    ListView1.Columns.Clear;
    ListView1.Items.Clear;
+   Application.ProcessMessages;
    dbColumns := TStringList.Create;  // Create a TStringList to handle CSV values
    dbColumns.Delimiter := ',';  // Set CSV delimiter (comma)
    dbColumns.StrictDelimiter := True;  // Avoid spaces as delimiters
@@ -1051,7 +1064,7 @@ begin
                 Result := ListBox.ItemIndex + 1;
             end
             else
-                ShowMessage('No part was selected.');
+                MessageDlg('No part was selected.' , mtError, MkSet(mbOK), 0);
         end;
     finally
         Form.Free;
