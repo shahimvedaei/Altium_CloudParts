@@ -3,17 +3,18 @@
     - Downlaod python 3 from the upstream and install
     - Make sure python is added to the system PATH.
     - Ref: https://www.python.org/downloads/
-- requirements.txt
-    - Install the requirements using pip
 - Altium Designer
     - The script will run under Altium Designer, so it is required to have the app installed.
 
 **2. How to install:**
-- Copy Chila360\Altium\Chila360_utils.py to C:\<path to Altium dir>\AD20
+- Open a cmd and cd to the Chila360 folder
+    - cd <path to Chila360>
+- Install the Extention
+    - python ./setup.py --install
 
 **3. Usage:**
-- Run the script via altium
-- Files->Run Script...->Chila360.pas
+- Open a schematic or PCB document on Altium Designer
+- Tools->Chila360
 
 **4. Issues and fixes:**
 - Libraries will not be updated:

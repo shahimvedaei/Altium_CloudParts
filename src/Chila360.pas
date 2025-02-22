@@ -26,6 +26,7 @@
     4    |   Change the color/font of the match text in listView
     4    |   Load/Save from/to ini file more systematic. ex. read a list of updated parameter, then load/save accordingly.
     4    |   When we press find the previous search should be halted, otherwise, on large DB we have issue.
+    4    |   Add setup to install the script and also configure menu to add the extnsion, https://www.altium.com/documentation/altium-designer/configuration-customization?srsltid=AfmBOoqb_6GK4bvNzJNsKMPnGsJyU1mdjmtj3r66EjoooMDNpOiUkcmH#restoring-menu-and-toolbar-defaults
 
 ................................................................................................................}
 
@@ -349,7 +350,7 @@ begin
     OutputFile := '.\output.txt';
     // Command to run Python script and redirect output to a file
     pyExe := 'pythonw';
-    pyScript := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + 'Chila360_utils.py';
+    pyScript := IncludeTrailingPathDelimiter(GetEnvVar('APPDATA')) + 'Altium\Chila360\Chila360_utils.py';
 
     // Check existence of utility script
     if not FileExists(pyScript) then
