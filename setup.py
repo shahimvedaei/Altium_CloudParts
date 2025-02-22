@@ -16,7 +16,7 @@ appdata_path = os.getenv('APPDATA') # C:\Users\<username>\AppData\Roaming
 ALTIUM_DIR = os.path.join(appdata_path, 'Altium')
 DEST_DIR = os.path.join(ALTIUM_DIR, 'Chila360')
 SETUP_DIR = os.path.dirname(os.path.abspath(__file__))  # Get script's directory
-SRC_DIR = os.path.abspath(os.path.join(SETUP_DIR, "..", "src"))  # ../src
+SRC_DIR = os.path.abspath(os.path.join(SETUP_DIR, "src"))
 
 ADD_TO_TOOLS = f"""
 PL PLChilaScript Command='ScriptingSystem:RunScript' Params='ProjectName={os.path.join(DEST_DIR, 'Chila360.PrjScr')}|ProcName={os.path.join(DEST_DIR, 'Chila360.pas')}>' Caption='Chila360' Image='{os.path.join(DEST_DIR, 'icon.png')}' Description='Cloud Library Search and Placement' DefaultChecked=0  End
@@ -42,7 +42,7 @@ def install():
 
 	# Check existence files/folders
 	if not os.path.exists(SRC_DIR):
-		print(f"Source directory not found: {SRC_DIR}")
+		print(f"ERROR: src directory not found: {SRC_DIR}")
 		return
 
 	if not os.path.exists(ALTIUM_DIR):

@@ -10,7 +10,7 @@
 - Open a cmd and cd to the Chila360 folder
     - cd <path to Chila360>
 - Install the Extention
-    - python ./setup.py --install
+    - python .\setup.py --install
 
 **3. Usage:**
 - Open a schematic or PCB document on Altium Designer

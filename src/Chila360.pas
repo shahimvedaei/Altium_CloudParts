@@ -26,7 +26,6 @@
     4    |   Change the color/font of the match text in listView
     4    |   Load/Save from/to ini file more systematic. ex. read a list of updated parameter, then load/save accordingly.
     4    |   When we press find the previous search should be halted, otherwise, on large DB we have issue.
-    4    |   Add setup to install the script and also configure menu to add the extnsion, https://www.altium.com/documentation/altium-designer/configuration-customization?srsltid=AfmBOoqb_6GK4bvNzJNsKMPnGsJyU1mdjmtj3r66EjoooMDNpOiUkcmH#restoring-menu-and-toolbar-defaults
 
 ................................................................................................................}
 
