@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 0
   Top = 0
   HorzScrollBar.Visible = False
-  Caption = 'Chila360 Cloud Lib Search'
+  Caption = 'CloudParts, Search and Place Components from Cloud'
   ClientHeight = 648
   ClientWidth = 682
   Color = 2763306
@@ -148,7 +148,7 @@ object Form1: TForm1
     Left = 692
     Top = 8
     Width = 664
-    Height = 176
+    Height = 216
     Caption = 'Settings'
     Color = 7646658
     ParentBackground = False
@@ -186,6 +186,19 @@ object Form1: TForm1
       Width = 58
       Height = 18
       Caption = 'DB path:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label17: TLabel
+      Left = 20
+      Top = 172
+      Width = 132
+      Height = 18
+      Caption = 'Install Library folder:'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15
@@ -257,10 +270,19 @@ object Form1: TForm1
       TabOrder = 3
       OnClick = Button_dbfetchClick
     end
+    object Edit_libInstallPath: TXPDirectoryEdit
+      Left = 164
+      Top = 168
+      Width = 488
+      Height = 24
+      StretchButtonImage = False
+      TabOrder = 4
+      Text = 'C:\'
+    end
   end
   object GroupBox_DBGenerator: TGroupBox
     Left = 692
-    Top = 192
+    Top = 272
     Width = 664
     Height = 304
     Caption = 'DB Generator'
@@ -605,7 +627,7 @@ object Form1: TForm1
       Top = 40
       Width = 190
       Height = 18
-      Caption = 'Chila360 Cloud Library Search'
+      Caption = 'CloudParts, Search and Place Components from Cloud'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15
@@ -644,7 +666,7 @@ object Form1: TForm1
       Top = 64
       Width = 78
       Height = 18
-      Caption = 'Version: 2.1'
+      Caption = 'Version: 2.2'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15

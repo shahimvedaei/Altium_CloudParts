@@ -1,8 +1,8 @@
 """
-Chila360_utils.py - Utility functions
+CloudParts_utils.py - Utility functions
 Written by: Shahim Vedaei <shahim.vedaei@gmail.com>
 Feb 2025
-Verison: 2.1
+Verison: 2.2
 """
 
 # Packages
@@ -15,7 +15,7 @@ import requests
 from urllib.parse import urlparse
 
 # How to generate .pyx file
-# cython --embed -o Chila360_utils.c Chila360_utils.pyx
+# cython --embed -o CloudParts_utils.c CloudParts_utils.pyx
 
 # TODO: this should be done automatically
 IND_PATH = 3

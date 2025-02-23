@@ -29,8 +29,4 @@
     - Uninstall the old python, and install the latest version of python
 
 
-Shahim Vedaei
-<shahim.vedaei@gmail.com>
-
-
 ![CloudParts UserManual](UserManual.jpg)

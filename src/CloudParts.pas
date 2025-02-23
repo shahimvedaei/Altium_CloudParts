@@ -1,11 +1,11 @@
 {................................................................................................................
-    Chila360.ps
+    CloudParts.ps
     Description:
         Altium Designer DelphiScript to generate a database of all components in the libraries with access to Git.
 
     License:    GPL
     Copywrite:  FEB 2025
-    Version:    2.1
+    Version:    2.2
     Maintainer: Shahim Vedaei <shahim.vedaei@gmail.com>
 
     Refs:
@@ -26,6 +26,7 @@
     4    |   Change the color/font of the match text in listView
     4    |   Load/Save from/to ini file more systematic. ex. read a list of updated parameter, then load/save accordingly.
     4    |   When we press find the previous search should be halted, otherwise, on large DB we have issue.
+    4    |   Add parametric search, similar to digikey which you can search among many params
 
 ................................................................................................................}
 
@@ -165,7 +166,26 @@ begin
     begin
         libPath := cacheDir + utl_prepPathStr(libName, false);
         libPath := StringReplace(libPath, '\', '/', MkSet(rfReplaceAll));
-        Result := libPath
+        Result := libPath;
+    end
+    else
+        MessageDlg('DB broken, PATH is empty', mtError, MkSet(mbOK), 0);
+end;
+{..............................................................................}
+
+{..............................................................................}
+function utl_getLibPathInLibInstallPath (libName: String): String;
+var
+    libInstallPath : String;
+    libPath        : String;
+begin
+    libInstallPath := IncludeTrailingPathDelimiter(Edit_libInstallPath.Text);
+
+    if (length(libName) > 0) then
+    begin
+        libPath := libInstallPath + utl_prepPathStr(libName, false);
+        libPath := StringReplace(libPath, '\', '/', MkSet(rfReplaceAll));
+        Result := libPath;
     end
     else
         MessageDlg('DB broken, PATH is empty', mtError, MkSet(mbOK), 0);
@@ -207,7 +227,7 @@ var
   updateFlag    : boolean;
 begin
    // INI file object
-  iniFile := IncludeTrailingPathDelimiter(GetEnvVar('APPDATA')) + 'Altium\chila360_settings.ini';
+  iniFile := IncludeTrailingPathDelimiter(GetEnvVar('APPDATA')) + 'Altium\CloudParts_settings.ini';
 
   // Check the changes
   updateFlag := False;
@@ -241,6 +261,11 @@ begin
            'cacheDir':
               begin
                  if settings_list[1] <> Edit_cacheDir.Text then
+                    updateFlag := True;
+              end;
+           'libInstallPath':
+              begin
+                 if settings_list[1] <> Edit_libInstallPath.Text then
                     updateFlag := True;
               end;
            'libsearchdir':
@@ -287,6 +312,7 @@ begin
         Ini.WriteString('Windows', 'dburl', Edit_dburl.Text);
         Ini.WriteString('Windows', 'dbPath', Edit_dbpath.Text);
         Ini.WriteString('Windows', 'cacheDir', Edit_cacheDir.Text);
+        Ini.WriteString('Windows', 'libInstallPath', Edit_libInstallPath.Text);
         Ini.WriteString('Windows', 'libsearchdir', Edit_libsearchdir.Text);
         Ini.WriteString('Windows', 'libdbsaveto', Edit_dbsaveto.Text);
         Ini.WriteString('Windows', 'liburl', Edit_liburl.Text);
@@ -309,7 +335,7 @@ var
    iniFile      : string;
    Ini          : TIniFile;
 begin
-   iniFile := IncludeTrailingPathDelimiter(GetEnvVar('APPDATA')) + 'Altium\chila360_settings.ini';
+   iniFile := IncludeTrailingPathDelimiter(GetEnvVar('APPDATA')) + 'Altium\CloudParts_settings.ini';
    if FileExists(iniFile) then
    begin
 
@@ -319,6 +345,7 @@ begin
          Edit_dburl.Text := Ini.ReadString('Windows', 'dburl', 'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main/DB.csv');
          Edit_dbpath.Text := Ini.ReadString('Windows', 'dbPath', 'C:\DB.csv');
          Edit_cacheDir.Text := Ini.ReadString('Windows', 'cacheDir', 'C:\');
+         Edit_libInstallPath.Text := Ini.ReadString('Windows', 'libInstallPath', 'C:\');
          Edit_libsearchdir.Text := Ini.ReadString('Windows', 'libsearchdir', 'C:\');
          Edit_dbsaveto.Text := Ini.ReadString('Windows', 'libdbsaveto', 'C:\DB.csv');
          Edit_liburl.Text := Ini.ReadString('Windows', 'liburl', 'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main/');
@@ -349,7 +376,7 @@ begin
     OutputFile := '.\output.txt';
     // Command to run Python script and redirect output to a file
     pyExe := 'pythonw';
-    pyScript := IncludeTrailingPathDelimiter(GetEnvVar('APPDATA')) + 'Altium\Chila360\Chila360_utils.py';
+    pyScript := IncludeTrailingPathDelimiter(GetEnvVar('APPDATA')) + 'Altium\CloudParts\CloudParts_utils.py';
 
     // Check existence of utility script
     if not FileExists(pyScript) then
@@ -985,14 +1012,21 @@ end;
 //    - Install/add the selected library to altium library manager
 procedure TForm1.Button_libaddClick(Sender: TObject);
 Var
-    IntMan : IIntegratedLibraryManager;
-    libPath : String;
-    SelectedItem: TListItem;
+    IntMan             : IIntegratedLibraryManager;
+    libPath            : String;
+    libInstallPath     : String;
+    libInstallPathFile : String;
+    temp : String;
+    SelectedItem       : TListItem;
 Begin
+
     if ListView1.Selected <> nil then
     begin
         SelectedItem := ListView1.Selected;
         libPath := utl_getLibPathInCache(utl_getListViewItem(SelectedItem, isParamExist('PATH')));
+
+        libInstallPathFile := utl_getLibPathInLibInstallPath(utl_getListViewItem(SelectedItem, isParamExist('PATH')));
+        libInstallPath := IncludeTrailingPathDelimiter(Edit_libInstallPath.Text);
 
         if not FileExists(libPath) then
         begin
@@ -1000,13 +1034,43 @@ Begin
             exit;
         end;
 
+        // Copy the Lib to libInstallPath
+        if not DirectoryExists(libInstallPath) then
+        begin
+            MessageDlg('Install library path does not exist: ' + libInstallPath, mtError, MkSet(mbOK), 0);
+            exit;
+        end;
+
+        if FileExists(libInstallPathFile) then
+        begin
+            if MessageDlg(libInstallPathFile + ' already existed. Do you want to install library again?', mtConfirmation, MkSet(mbYes, mbNo), 0) = mrNo then
+               exit;
+        end;
+
+        // Create necessary sub-dir
+        if not DirectoryExists(ExtractFileDir(ExpandFileName(libInstallPathFile))) then
+        begin
+           if not ForceDirectories(ExtractFileDir(ExpandFileName(libInstallPathFile))) then
+           begin
+              MessageDlg('Could not create directory: ' + ExtractFileDir(ExpandFileName(libInstallPathFile)), mtError, MkSet(mbOK), 0);
+              exit;
+           end;
+        end;
+
+        if not CopyFile(libPath, libInstallPathFile, False) then
+        begin
+           MessageDlg('Could not copy file from ' + libPath + ' to ' + libInstallPathFile, mtError, MkSet(mbOK), 0);
+           exit;
+        end;
+
+        // Install library
         IntMan := IntegratedLibraryManager;
         If IntMan = Nil Then
         begin
             MessageDlg('Lib Manager failed.', mtError, MkSet(mbOK), 0);
             exit;
         end;
-        IntMan.InstallLibrary(libPath);
+        IntMan.InstallLibrary(libInstallPathFile);
         MessageDlg('Library installed.', mtInformation, MkSet(mbOK), 0);
     end // if ListView1.Selected <>
     else
