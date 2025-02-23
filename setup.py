@@ -76,6 +76,9 @@ def clean_rcs():
 
 def install():
 	"""Install the CloudParts to Altium"""
+	# Check Python
+	requirements()
+
 	# Check existence files/folders
 	if not os.path.exists(SRC_DIR):
 		print(f"ERROR: src directory not found: {SRC_DIR}")
@@ -140,9 +143,6 @@ def main():
 	"""
 	Main function
 	"""
-	# Check Python
-	requirements()
-
 	# Parsing input params
 	args = parse_input()
 
