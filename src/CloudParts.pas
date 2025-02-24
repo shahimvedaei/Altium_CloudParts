@@ -18,7 +18,6 @@
     ----------------------------------------------------------------------------------------------------------
     2    |   .package what is this? in parameters
     2    |   Cleancoding
-    3    |   User from the UI can select which parameters to be included in DB
     4    |   Updateing existing DB based on last-modified field
     4    |   Check the output of RunApplicationAndWAit
     4    |   Investigate DLL usage
@@ -39,9 +38,20 @@
 function getParams: String;
 var
     params      : String;
+    libdbParams : String;
+    i           : integer;
 begin
-    // Hint: Add '.' if it is a parametes
-    params := 'NAME,TYPE,DESCRIPTION,PATH,HEIGHT,.MANF,.MANF_P#,.PARAM,.PARAM2,.VALUE';
+    // Get Edit_dbParams from the UI
+    libdbParams := '';
+    if ListBox_dbParams.GetCount > 0 then
+    begin
+        for i:=0 to ListBox_dbParams.GetCount-1 do
+        begin
+           // Hint: Add '.' if it is a parametes
+           libdbParams := libdbParams + ',.' + ListBox_dbParams.Items[i];
+        end;
+    end;
+    params := 'NAME,TYPE,DESCRIPTION,PATH,HEIGHT' + libdbParams;
     Result := params;
 end;
 {..............................................................................}
@@ -52,7 +62,7 @@ function getCountParams: Integer;
 var
     params_list : TStringList;
     params      : String;
-    count         : Integer;
+    count       : Integer;
 begin
     // TODO: This funciton can be implemented in a simpler way
     params := getParams;
@@ -144,7 +154,7 @@ var
     url : String;
 begin
     // TODO: Check total num of colums before that
-    url := ListView1.Columns[getCountParams].Caption;
+    url := ListView1.Columns[ListView1.Columns.Count-1].Caption;
     if (length(url) > 0) then
     begin
         Result := utl_prepUrlStr(url);
@@ -222,6 +232,7 @@ procedure TForm1.Form_saveSettings(Sender: TObject);
 var
   Ini           : TIniFile;
   iniFile       : String;
+  libdbParams   : String;
   settings_list : TStringList;
   i             : Integer;
   updateFlag    : boolean;
@@ -237,6 +248,22 @@ begin
 
   if Memo_settings.Lines.Count < 2 then
      updateFlag := True;
+
+  // dbParams
+  libdbParams := '';
+  if ListBox_dbParams.Items.Count > 0 then
+  begin
+     for i:=0 to ListBox_dbParams.Items.Count-1 do
+     begin
+        // To void adding , at the beginning/end of the string
+        if length(libdbParams) = 0 then
+        begin
+           libdbParams := ListBox_dbParams.Items[i];
+        end
+        else
+           libdbParams := libdbParams + ',' + ListBox_dbParams.Items[i];
+     end;
+  end;
 
   // TODO: is there any better way to make it systematic, rather than compare one-by-one
   for i := 0 to Memo_settings.Lines.Count - 1 do
@@ -283,6 +310,11 @@ begin
                  if settings_list[1] <> Edit_liburl.Text then
                     updateFlag := True;
               end;
+           'libdbparams':
+              begin
+                 if settings_list[1] <> libdbParams then
+                    updateFlag := True;
+              end;
         else // Inifile broken, each line should have correct header
             updateFlag := True;
         end; // case
@@ -316,6 +348,7 @@ begin
         Ini.WriteString('Windows', 'libsearchdir', Edit_libsearchdir.Text);
         Ini.WriteString('Windows', 'libdbsaveto', Edit_dbsaveto.Text);
         Ini.WriteString('Windows', 'liburl', Edit_liburl.Text);
+        Ini.WriteString('Windows', 'libdbparams', libdbParams);
         Memo_settings.Clear;
         Memo_settings.Lines.LoadFromFile(iniFile);
       finally
@@ -333,11 +366,20 @@ end;
 procedure TForm1.Form_loadSettings(Sender: TObject);
 var
    iniFile      : string;
+   libdbParams  : String;
+   params_list  : TStringList;
    Ini          : TIniFile;
+   i            : integer;
 begin
    iniFile := IncludeTrailingPathDelimiter(GetEnvVar('APPDATA')) + 'Altium\CloudParts_settings.ini';
+   libdbParams := '';
+
    if FileExists(iniFile) then
    begin
+       // Initialize
+       params_list := TStringList.Create;
+       params_list.Delimiter := ',';
+       params_list.StrictDelimiter := True;
 
        Ini := TIniFile.Create(iniFile);
        try
@@ -349,10 +391,22 @@ begin
          Edit_libsearchdir.Text := Ini.ReadString('Windows', 'libsearchdir', 'C:\');
          Edit_dbsaveto.Text := Ini.ReadString('Windows', 'libdbsaveto', 'C:\DB.csv');
          Edit_liburl.Text := Ini.ReadString('Windows', 'liburl', 'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main/');
+         libdbParams := Ini.ReadString('Windows', 'libdbparams', 'MANF,MANF_P#,PARAM,PARAM2,VALUE');
          // load settings to memo_settings for future check analysis
          Memo_settings.Lines.LoadFromFile(iniFile);
+         // load libdbParams to
+         ListBox_dbParams.Items.Clear;
+         params_list.DelimitedText := libdbParams;
+         if params_list.Count > 0 then
+         begin
+             for i:=0 to params_list.Count-1 do
+             begin
+                 ListBox_dbParams.Items.Add(params_list[i]);
+             end; // for
+         end; // if params_list.Count
        finally
          Ini.Free;
+         params_list.free;
        end;
    end;
 
@@ -795,7 +849,7 @@ begin
     files_max := XPSpinEdit_maxfilesno.Value;
     // TODO: altium does not update StatusBar1 as it is busy
     StatusBar1.Panels[0].Text := '';
-    Memo_log.Clear;
+    Memo_log.Lines.Clear;
 
     // Check path
     if not DirectoryExists(ExtractFileDir(dbPath)) then
@@ -828,7 +882,7 @@ begin
                     GOTO postprocessing_label;
                 end;
                 files_count := files_count + 1;
-                Memo_log.Clear;
+                Memo_log.Lines.Clear;
                 Memo_log.Lines.Add(IntToStr(files_count) + ': ' + LIB_files.Strings[I]);
                 ReadPCBLIB(LIB_files.Strings[I], dbPath, LIB_path);
             End;
@@ -855,7 +909,7 @@ begin
                     GOTO postprocessing_label;
                 end;
                 files_count := files_count + 1;
-                Memo_log.Clear;
+                Memo_log.Lines.Clear;
                 Memo_log.Lines.Add(IntToStr(files_count) + ': ' + LIB_files.Strings[I]);
                 ReadSCHLIB(LIB_files.Strings[I], dbPath, LIB_path);
             End;
@@ -870,7 +924,7 @@ postprocessing_label:
     // Due to the limination of Altium Delphi language we need to perfom some processing by python
     DBPostprocessing(dbPath, LIB_path);
 
-    Memo_log.Clear;
+    Memo_log.Lines.Clear;
     Memo_log.Lines.Add('Total Lib Files: ' + IntToStr(files_count));
 
     if FileExists(dbPath) then
@@ -1323,6 +1377,44 @@ end;
 {..............................................................................}
 
 {..............................................................................}
+procedure TForm1.Button_dbParamsAddClick(Sender: TObject);
+var
+    i     : integer;
+begin
+    // Hint: This button shall be TBotton type to use onExit for saving changes
+    if length(Edit_dbParams.Text) > 0 then
+    begin
+        // Check if Item is already existed in the list
+        if ListBox_dbParams.Items.Count > 0 then
+        begin
+           for i:=0 to ListBox_dbParams.Items.Count-1 do
+           begin
+               if ListBox_dbParams.Items[i] = Edit_dbParams.Text then
+               begin
+                   MessageDlg('Parameter is already existed.', mtError, MkSet(mbOK), 0);
+                   exit;
+               end;
+           end; // for
+        end; // if ListBox_dbParams.Items
+
+        ListBox_dbParams.Items.Insert(0, Edit_dbParams.Text);
+        Edit_dbParams.Text := '';
+    end; // if length(Edit_dbParams.Text
+end;
+{..............................................................................}
+
+{..............................................................................}
+procedure TForm1.Button_dbParamsDeleteClick(Sender: TObject);
+begin
+    // Hint: This button shall be TBotton type to use onExit for saving changes
+    if ListBox_dbParams.ItemIndex <> -1 then  // Check if an item is selected
+    begin
+        ListBox_dbParams.Items.Delete(ListBox_dbParams.ItemIndex);
+    end
+    else
+        MessageDlg('Select an item.', mtInformation, MkSet(mbOK), 0);
+end;
+{..............................................................................}
 procedure TForm1.Button_selComponentsPageClick(Sender: TObject);
 begin
     GroupBox_components.Visible := True;
@@ -1358,11 +1450,11 @@ begin
 
     GroupBox_DBGenerator.Left := 12;
     GroupBox_DBGenerator.Top := 8;
+    Memo_log.Lines.Clear;
 end;
 {..............................................................................}
 
 {..............................................................................}
-
 procedure TForm1.Button_selInfoPageClick(Sender: TObject);
 begin
     GroupBox_components.Visible := False;

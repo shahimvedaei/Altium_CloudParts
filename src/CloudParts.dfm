@@ -146,7 +146,7 @@ object Form1: TForm1
   end
   object GroupBox_settings: TGroupBox
     Left = 692
-    Top = 8
+    Top = 16
     Width = 664
     Height = 216
     Caption = 'Settings'
@@ -282,9 +282,9 @@ object Form1: TForm1
   end
   object GroupBox_DBGenerator: TGroupBox
     Left = 692
-    Top = 272
+    Top = 248
     Width = 664
-    Height = 304
+    Height = 560
     Caption = 'DB Generator'
     Color = 7646658
     ParentBackground = False
@@ -345,10 +345,23 @@ object Form1: TForm1
     object XPSplitter1: TXPSplitter
       Left = 2
       Top = 18
-      Height = 284
+      Height = 540
       ExplicitLeft = 104
       ExplicitTop = 136
       ExplicitHeight = 100
+    end
+    object Label18: TLabel
+      Left = 9
+      Top = 124
+      Width = 54
+      Height = 18
+      Caption = 'Params:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
     end
     object Edit_dbsaveto: TXPFileNameEdit
       Left = 88
@@ -385,9 +398,9 @@ object Form1: TForm1
       OnExit = Form_saveSettings
     end
     object Button_dbgenerate: TButton
-      Left = 508
-      Top = 121
-      Width = 136
+      Left = 484
+      Top = 361
+      Width = 160
       Height = 32
       Caption = 'DB Generate'
       TabOrder = 5
@@ -402,8 +415,8 @@ object Form1: TForm1
       Value = 500
     end
     object CheckBox_updateDB: TCheckBox
-      Left = 8
-      Top = 128
+      Left = 15
+      Top = 372
       Width = 156
       Height = 18
       Caption = 'Update existing DB'
@@ -434,9 +447,9 @@ object Form1: TForm1
     end
     object Memo_log: TMemo
       Left = 10
-      Top = 187
+      Top = 408
       Width = 640
-      Height = 112
+      Height = 131
       Color = clBlack
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
@@ -449,6 +462,41 @@ object Form1: TForm1
       ReadOnly = True
       ScrollBars = ssVertical
       TabOrder = 6
+    end
+    object Edit_dbParams: TXPEdit
+      Left = 88
+      Top = 121
+      Width = 508
+      Height = 24
+      TabOrder = 7
+      Text = ''
+    end
+    object ListBox_dbParams: TListBox
+      Left = 88
+      Top = 152
+      Width = 508
+      Height = 176
+      TabOrder = 8
+    end
+    object Button_dbParamsAdd: TButton
+      Left = 608
+      Top = 120
+      Width = 28
+      Height = 25
+      Caption = '+'
+      TabOrder = 9
+      OnClick = Button_dbParamsAddClick
+      OnExit = Form_saveSettings
+    end
+    object Button_dbParamsDelete: TButton
+      Left = 608
+      Top = 152
+      Width = 28
+      Height = 25
+      Caption = '-'
+      TabOrder = 10
+      OnClick = Button_dbParamsDeleteClick
+      OnExit = Form_saveSettings
     end
   end
   object GroupBox4: TGroupBox
@@ -625,7 +673,7 @@ object Form1: TForm1
     object Label1: TLabel
       Left = 48
       Top = 40
-      Width = 190
+      Width = 352
       Height = 18
       Caption = 'CloudParts, Search and Place Components from Cloud'
       Font.Charset = DEFAULT_CHARSET
