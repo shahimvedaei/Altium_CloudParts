@@ -16,6 +16,7 @@
     ----------------------------------------------------------------------------------------------------------
     PRI  |  Description
     ----------------------------------------------------------------------------------------------------------
+    2    |   Feature: Parse Intlib
     2    |   .package what is this? in parameters
     2    |   Cleancoding
     4    |   Updateing existing DB based on last-modified field
@@ -30,9 +31,7 @@
 ................................................................................................................}
 
 
-// TODO: is it possible to make variable global/const?
 {..............................................................................}
-
 // getParams
 //     return: list all available parameters
 function getParams: String;
@@ -515,6 +514,12 @@ begin
         exit;
     end;
 
+    if length(Edit_dburl.Text) = 0 then
+    begin
+        MessageDlg('URL is empty' , mtIn, MkSet(mbOK), 0);
+        exit;
+    end;
+
     StatusBar1.Panels[0].Text := 'Fetching DB ...';
     utl_downloadFunc(Edit_dburl.Text, cacheDir);
     StatusBar1.Panels[0].Text := 'Fetch DB completed.';
@@ -943,14 +948,82 @@ end;
 {..............................................................................}
 
 {..............................................................................}
+function utl_searchDB;
+var
+   FilterMask : string;
+   dbColumns      : TStringList;
+   dbListItem     : TListItem;
+   maxSearchItems : Integer;
+   LineText: string;
+   i,j            : Integer;
+begin
+
+   FilterMask := Edit_filter.Text;
+
+   // Clear
+   ListView1.Items.Clear;
+   Application.ProcessMessages;
+
+   dbColumns := TStringList.Create;  // Create a TStringList to handle CSV values
+   dbColumns.Delimiter := ',';  // Set CSV delimiter (comma)
+   dbColumns.StrictDelimiter := True;  // Avoid spaces as delimiters
+
+   // Loop through each line in DB file
+   // Hint: line 0 is header info
+   try
+        for i := 1 to Memo_DB.Lines.Count - 1 do
+        begin
+          LineText := Memo_DB.Lines[i];
+          ProgressBar1.Position := i;
+          // Application.ProcessMessages; // ?
+          // Check if the search text exists in the line
+          if (Pos(LowerCase(FilterMask), LowerCase(LineText)) > 0) or (FilterMask = '*') or (Length(FilterMask) = 0) then
+          begin
+
+            dbColumns.DelimitedText := LineText;
+            if (ComboBox_filter.Text = 'PCBLIB') and (UpperCase(dbColumns[1]) <> 'PCBLIB') then
+            begin
+                continue;
+            end else if (ComboBox_filter.Text = 'SCHLIB') and (UpperCase(dbColumns[1]) <> 'SCHLIB') then
+                continue;
+
+            // Add data to listview
+            if dbColumns.Count > 0 then
+            begin
+                // Max view warning
+                if ListView1.Items.Count = 1000 then
+                begin
+                     if MessageDlg('Over 1000 items are found, do you want to continue?', mtWarning, MkSet(mbYes, mbNo), 0) = mrNo then
+                        exit;
+                end;
+
+                dbListItem := ListView1.Items.Add;
+                dbListItem.Caption := dbColumns[0];  // First column (main item)
+
+                for j := 1 to dbColumns.Count - 1 do
+                begin
+                    dbListItem.SubItems.Add(dbColumns[j]);  // Add subitems
+                end;
+
+                Application.ProcessMessages;
+            end; // dbColumns.Count
+
+          end; // if Pos
+        end; // for Memo_DB.Lines.Count
+   finally
+        dbColumns.Free;
+        Application.ProcessMessages;
+   end;
+end;
+{..............................................................................}
+
+{..............................................................................}
 // UI: Button_findClick
 procedure TForm1.Button_findClick(Sender: TObject);
 var
   dbPath : String;
-  FilterMask : string;
 
-  LineText, ResultText: string;
-  FoundPos, i,j: Integer;
+  i         : Integer;
 
   dbColumns : TStringList;
   dbListItem: TListItem;
@@ -960,7 +1033,6 @@ var
   dbTimestamp_int : Integer;
 begin
    dbPath := Edit_dbpath.Text;
-   FilterMask := Edit_filter.Text;
 
    // Check DB file
     if not FileExists(dbPath) then
@@ -996,13 +1068,14 @@ begin
       Memo_DB.Lines.LoadFromFile(dbPath);
    end;
 
-   // Clear
    ProgressBar1.Position := 0;
    ProgressBar1.Max := Memo_DB.Lines.Count;
+
    ListView1.ViewStyle := vsReport;
    ListView1.Columns.Clear;
    ListView1.Items.Clear;
    Application.ProcessMessages;
+
    dbColumns := TStringList.Create;  // Create a TStringList to handle CSV values
    dbColumns.Delimiter := ',';  // Set CSV delimiter (comma)
    dbColumns.StrictDelimiter := True;  // Avoid spaces as delimiters
@@ -1022,40 +1095,11 @@ begin
            Width := 100;  // Adjust column width
        end;
    end;
-
-   // Loop through each line in DB file
-   // Hint: line 0 is header info
-   for i := 1 to Memo_DB.Lines.Count - 1 do
-   begin
-     LineText := Memo_DB.Lines[i];
-     ProgressBar1.Position := i;
-     // Application.ProcessMessages; // ?
-     // Check if the search text exists in the line
-     if (Pos(LowerCase(FilterMask), LowerCase(LineText)) > 0) or (FilterMask = '*') or (Length(FilterMask) = 0) then
-     begin
-
-       dbColumns.DelimitedText := LineText;
-       if (ComboBox_filter.Text = 'PCBLIB') and (UpperCase(dbColumns[1]) <> 'PCBLIB') then
-       begin
-          continue;
-       end else if (ComboBox_filter.Text = 'SCHLIB') and (UpperCase(dbColumns[1]) <> 'SCHLIB') then
-          continue;
-
-       // Add data to listview
-       if dbColumns.Count > 0 then
-       begin
-           dbListItem := ListView1.Items.Add;
-           dbListItem.Caption := dbColumns[0];  // First column (main item)
-
-           for j := 1 to dbColumns.Count - 1 do
-               dbListItem.SubItems.Add(dbColumns[j]);  // Add subitems
-
-           Application.ProcessMessages;
-       end; // dbColumns.Count
-
-     end; // if Pos
-   end; // for Memo_DB.Lines.Count
    dbColumns.Free;
+
+   // Call search function
+   utl_searchDB;
+
    Button_find.Enabled := True;
 
 end;
@@ -1415,6 +1459,98 @@ begin
         MessageDlg('Select an item.', mtInformation, MkSet(mbOK), 0);
 end;
 {..............................................................................}
+
+{..............................................................................}
+function utl_loadDBListServerUrl(verbose : boolean);
+var
+    cacheDir        : String;
+    dbListPath      : String;
+    Item            : TListItem;
+    i               : Integer;
+begin
+    cacheDir := IncludeTrailingPathDelimiter(Edit_cacheDir.Text);
+    dbListPath := cacheDir + 'DB_list.txt';
+
+    // Check existence of the DB list
+    if not FileExists(dbListPath) then
+    begin
+        if verbose = True then
+            MessageDlg('Could not find DB list: ' + dbListPath, mtError, MkSet(mbOK), 0);
+        exit;
+    end;
+
+    // Check if file is in use by other applications
+    while IsFileInUse(dbListPath) = True do
+    begin
+        if verbose = False then
+            exit;
+
+        if MessageDlg('The DB list file is open in another application. please close it and try again: ' + dbListPath, mtWarning, MkSet(mbRetry, mbCancel), 0) = mrCancel then
+            exit;
+    end;
+
+    // Load data to ListBox
+    ListView_dbListServer.ViewStyle := vsReport;
+    ListView_dbListServer.Columns.Clear;
+    ListView_dbListServer.Items.Clear;
+    Memo_tempBuffer.Lines.Clear;
+    Memo_tempBuffer.Lines.LoadFromFile(dbListPath);
+
+    // init listview
+    with ListView_dbListServer.Columns.Add do
+    begin
+      Caption := 'URL';
+      Width := 1000;
+    end;
+
+    if Memo_tempBuffer.Lines.Count > 0 then
+    begin
+        for i := 0 to Memo_tempBuffer.Lines.Count-1 do
+        begin
+           Item := ListView_dbListServer.Items.Add;
+           Item.Caption := Memo_tempBuffer.Lines[i];
+        end;
+    end;
+
+    Memo_tempBuffer.Lines.Clear;
+end;
+{..............................................................................}
+
+{..............................................................................}
+procedure TForm1.Button_dbListServerUpdateClick(Sender: TObject);
+var
+    dbListServerUrl : String;
+    cacheDir        : String;
+begin
+    // Constant path to the DB list on mainainer GitHub
+    dbListServerUrl := 'https://github.com/shahimvedaei/Altium_CloudParts/raw/refs/heads/master/SampleDBs/DB_list.txt';
+    cacheDir := IncludeTrailingPathDelimiter(Edit_cacheDir.Text);
+
+    if not DirectoryExists(cacheDir) then
+    begin
+        MessageDlg('Cache dir does not exist.' , mtError, MkSet(mbOK), 0);
+        exit;
+    end;
+
+    StatusBar1.Panels[0].Text := 'Downloading DB list from server...';
+    utl_downloadFunc(dbListServerUrl, cacheDir);
+    StatusBar1.Panels[0].Text := 'Download DB list is completed.';
+
+    utl_loadDBListServerUrl(True);
+end;
+{..............................................................................}
+
+{..............................................................................}
+procedure TForm1.ListView_dbListServerChange(Sender: TObject; Item: TListItem; Change: TItemChange);
+begin
+    if ListView_dbListServer.Selected <> nil then
+    begin
+        Edit_dburl.Text := ListView_dbListServer.Selected.Caption;
+    end;
+end;
+{..............................................................................}
+
+{..............................................................................}
 procedure TForm1.Button_selComponentsPageClick(Sender: TObject);
 begin
     GroupBox_components.Visible := True;
@@ -1437,6 +1573,9 @@ begin
 
     GroupBox_settings.Left := 12;
     GroupBox_settings.Top := 8;
+
+    // Update DB list if it is available. Verbosity = False, not to raise error
+    utl_loadDBListServerUrl(False);
 end;
 {..............................................................................}
 

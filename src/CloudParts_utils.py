@@ -2,7 +2,6 @@
 CloudParts_utils.py - Utility functions
 Written by: Shahim Vedaei <shahim.vedaei@gmail.com>
 Feb 2025
-Verison: 2.2
 """
 
 # Packages

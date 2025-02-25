@@ -2,7 +2,6 @@
 setup.py - Setup and install the project
 Written by: Shahim Vedaei <shahim.vedaei@gmail.com>
 Feb 2025
-Verison: 2.0
 """
 
 import re

@@ -1,0 +1,1 @@
+https://github.com/shahimvedaei/Altium_CloudParts/raw/refs/heads/master/SampleDBs/DB_Chilaboard_Altium-Library.csv

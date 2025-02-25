@@ -33,7 +33,7 @@ object Form1: TForm1
     Left = 12
     Top = 8
     Width = 664
-    Height = 560
+    Height = 576
     Caption = 'Components'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
@@ -42,6 +42,14 @@ object Form1: TForm1
     Font.Style = []
     ParentFont = False
     TabOrder = 1
+    object XPSplitter2: TXPSplitter
+      Left = 2
+      Top = 18
+      Height = 556
+      ExplicitLeft = 328
+      ExplicitTop = 504
+      ExplicitHeight = 100
+    end
     object ComboBox_filter: TComboBox
       Left = 343
       Top = 24
@@ -59,7 +67,7 @@ object Form1: TForm1
       Left = 16
       Top = 64
       Width = 632
-      Height = 432
+      Height = 440
       Color = clMenu
       Columns = <
         item
@@ -89,7 +97,7 @@ object Form1: TForm1
     end
     object ProgressBar1: TProgressBar
       Left = 20
-      Top = 504
+      Top = 512
       Width = 624
       Height = 7
       Step = 1
@@ -97,9 +105,9 @@ object Form1: TForm1
     end
     object Button_libdownload: TXPButton
       Left = 452
-      Top = 520
+      Top = 528
       Width = 100
-      Height = 24
+      Height = 32
       Caption = 'DOWNLOAD'
       Color = 7646658
       ParentColor = False
@@ -109,9 +117,9 @@ object Form1: TForm1
     end
     object Button_libadd: TXPButton
       Left = 564
-      Top = 520
+      Top = 528
       Width = 85
-      Height = 24
+      Height = 32
       Caption = 'ADD LIB'
       Color = 7646658
       ParentColor = False
@@ -132,10 +140,10 @@ object Form1: TForm1
       OnClick = Button_findClick
     end
     object Button_place: TXPButton
-      Left = 24
-      Top = 520
+      Left = 16
+      Top = 528
       Width = 228
-      Height = 24
+      Height = 32
       Caption = 'PLACE'
       Color = 7646658
       ParentColor = False
@@ -148,7 +156,7 @@ object Form1: TForm1
     Left = 692
     Top = 16
     Width = 664
-    Height = 216
+    Height = 416
     Caption = 'Settings'
     Color = 7646658
     ParentBackground = False
@@ -156,7 +164,7 @@ object Form1: TForm1
     TabOrder = 2
     object Label4: TLabel
       Left = 16
-      Top = 136
+      Top = 296
       Width = 86
       Height = 18
       Caption = 'Cache folder:'
@@ -169,7 +177,7 @@ object Form1: TForm1
     end
     object Label2: TLabel
       Left = 16
-      Top = 72
+      Top = 56
       Width = 55
       Height = 18
       Caption = 'DB URL:'
@@ -182,7 +190,7 @@ object Form1: TForm1
     end
     object Label8: TLabel
       Left = 16
-      Top = 104
+      Top = 264
       Width = 58
       Height = 18
       Caption = 'DB path:'
@@ -195,7 +203,7 @@ object Form1: TForm1
     end
     object Label17: TLabel
       Left = 20
-      Top = 172
+      Top = 332
       Width = 132
       Height = 18
       Caption = 'Install Library folder:'
@@ -208,7 +216,7 @@ object Form1: TForm1
     end
     object Edit_cacheDir: TXPDirectoryEdit
       Left = 112
-      Top = 134
+      Top = 294
       Width = 540
       Height = 24
       Color = clWindowFrame
@@ -225,7 +233,7 @@ object Form1: TForm1
     end
     object Edit_dbpath: TXPFileNameEdit
       Left = 80
-      Top = 102
+      Top = 262
       Width = 572
       Height = 24
       Color = clGrayText
@@ -243,7 +251,7 @@ object Form1: TForm1
     end
     object Edit_dburl: TXPEdit
       Left = 80
-      Top = 70
+      Top = 54
       Width = 564
       Height = 24
       Ctl3D = True
@@ -256,13 +264,11 @@ object Form1: TForm1
       ParentCtl3D = False
       ParentFont = False
       TabOrder = 0
-      Text = 
-        'https://github.com/chilaboard/Altium-Library/raw/refs/heads/main' +
-        '/DB.csv'
+      Text = ''
       OnExit = Form_saveSettings
     end
     object Button_dbfetch: TButton
-      Left = 524
+      Left = 399
       Top = 24
       Width = 116
       Height = 25
@@ -272,17 +278,37 @@ object Form1: TForm1
     end
     object Edit_libInstallPath: TXPDirectoryEdit
       Left = 164
-      Top = 168
+      Top = 328
       Width = 488
       Height = 24
       StretchButtonImage = False
       TabOrder = 4
       Text = 'C:\'
     end
+    object Button_dbListServerUpdate: TXPButton
+      Left = 534
+      Top = 24
+      Width = 108
+      Height = 24
+      Caption = 'Update DB list'
+      ParentColor = False
+      TabOrder = 5
+      TabStop = False
+      OnClick = Button_dbListServerUpdateClick
+    end
+    object ListView_dbListServer: TListView
+      Left = 16
+      Top = 88
+      Width = 628
+      Height = 150
+      Columns = <>
+      TabOrder = 6
+      OnChange = ListView_dbListServerChange
+    end
   end
   object GroupBox_DBGenerator: TGroupBox
     Left = 692
-    Top = 248
+    Top = 448
     Width = 664
     Height = 560
     Caption = 'DB Generator'
@@ -500,10 +526,10 @@ object Form1: TForm1
     end
   end
   object GroupBox4: TGroupBox
-    Left = 1368
+    Left = 1376
     Top = 168
     Width = 326
-    Height = 408
+    Height = 480
     Caption = 'Background process'
     TabOrder = 4
     object Label9: TLabel
@@ -541,6 +567,13 @@ object Form1: TForm1
       Height = 16
       Caption = 'Load load DB file path'
     end
+    object Label19: TLabel
+      Left = 8
+      Top = 416
+      Width = 185
+      Height = 16
+      Caption = 'Multi purpose temporary memo:'
+    end
     object Memo_DB: TMemo
       Left = 8
       Top = 183
@@ -575,6 +608,15 @@ object Form1: TForm1
       TabOrder = 3
       WordWrap = False
     end
+    object Memo_tempBuffer: TMemo
+      Left = 8
+      Top = 432
+      Width = 312
+      Height = 89
+      ScrollBars = ssVertical
+      TabOrder = 4
+      WordWrap = False
+    end
   end
   object XPButtonEx1: TXPButtonEx
     Left = 376
@@ -590,9 +632,9 @@ object Form1: TForm1
   end
   object Button_selComponentsPage: TXPButton
     Left = 16
-    Top = 578
+    Top = 592
     Width = 150
-    Height = 40
+    Height = 26
     Caption = 'Components'
     Color = 7646658
     Font.Charset = DEFAULT_CHARSET
@@ -608,9 +650,9 @@ object Form1: TForm1
   end
   object Button_selSettingsPage: TXPButton
     Left = 187
-    Top = 578
+    Top = 592
     Width = 150
-    Height = 40
+    Height = 26
     Caption = 'Settings'
     Color = 7646658
     Font.Charset = DEFAULT_CHARSET
@@ -626,9 +668,9 @@ object Form1: TForm1
   end
   object Button_selDBGeneratorPage: TXPButton
     Left = 355
-    Top = 578
+    Top = 592
     Width = 150
-    Height = 40
+    Height = 26
     Caption = 'DataBase Gen'
     Color = 7646658
     Font.Charset = DEFAULT_CHARSET
@@ -644,9 +686,9 @@ object Form1: TForm1
   end
   object Button_selInfoPage: TXPButton
     Left = 525
-    Top = 578
+    Top = 592
     Width = 150
-    Height = 40
+    Height = 26
     Caption = 'Info'
     Color = 7646658
     Font.Charset = DEFAULT_CHARSET
