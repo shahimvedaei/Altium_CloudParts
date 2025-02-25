@@ -470,16 +470,33 @@ end;
 //     saveto: string, the full filename path to save the downloaded file.
 procedure utl_downloadFunc (url: String; savePath : String);
 var
-    args   : String;
-    res    : String;
+    args        : String;
+    res         : String;
+    checkPath   : String;
 begin
     args := '--action=download_url --url=' + url + ' --saveto=' + savePath;
 
     StatusBar1.Panels[0].Text := 'Downloading...';
     RunPythonScript(args, res);
-    StatusBar1.Panels[0].Text := 'Download completed.';
-    Memo_log.Lines.Add('Download: ' + url + ', to ' + savePath + ' complited.');
-    MessageDlg('Download completed' , mtInformation, MkSet(mbOK), 0);
+
+    // Check if file is downloaded
+    if length(ExtractFileName(savePath)) = 0 then
+    begin
+       checkPath := savePath + Copy(url, LastDelimiter('/', url) + 1, Length(url));
+    end else
+       checkPath := savePath;
+
+    if FileExists(checkPath) then
+    begin
+       StatusBar1.Panels[0].Text := 'Download completed.';
+       Memo_log.Lines.Add('Download: ' + url + ', to ' + savePath + ' complited.');
+       MessageDlg('Download completed' , mtInformation, MkSet(mbOK), 0);
+    end else
+    begin
+       StatusBar1.Panels[0].Text := 'Download Failed.';
+       Memo_log.Lines.Add('Download: ' + url + ', to ' + savePath + ' Failed.');
+       MessageDlg('Faild to download.' , mtError, MkSet(mbOK), 0);
+    end;
 
 end;
 {..............................................................................}
@@ -505,9 +522,10 @@ end;
 procedure TForm1.Button_dbfetchClick(Sender: TObject);
 var
     cacheDir :  String;
+    dbPath   :  String;
 begin
-    // TODO: user IncludeTrailingPathDelimiter instead
-    cacheDir := utl_prepPathStr(Edit_cacheDir.Text, True);
+    cacheDir := IncludeTrailingPathDelimiter(Edit_cacheDir.Text);
+    dbPath := cacheDir + Copy(Edit_dburl.Text, LastDelimiter('/', Edit_dburl.Text) + 1, Length(Edit_dburl.Text));
     if not DirectoryExists(cacheDir) then
     begin
         MessageDlg('Cache dir does not exist.' , mtError, MkSet(mbOK), 0);
@@ -516,13 +534,17 @@ begin
 
     if length(Edit_dburl.Text) = 0 then
     begin
-        MessageDlg('URL is empty' , mtIn, MkSet(mbOK), 0);
+        MessageDlg('URL is empty' , mtInformation, MkSet(mbOK), 0);
         exit;
     end;
 
     StatusBar1.Panels[0].Text := 'Fetching DB ...';
     utl_downloadFunc(Edit_dburl.Text, cacheDir);
     StatusBar1.Panels[0].Text := 'Fetch DB completed.';
+
+    // Set the DB path to the newly downloaded file
+    if FileExists(dbPath) then
+       Edit_dbpath.Text := dbPath;
 end;
 {..............................................................................}
 
