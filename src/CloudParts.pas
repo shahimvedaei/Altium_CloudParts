@@ -438,9 +438,7 @@ begin
         exit;
     end;
 
-    pyScript := '"' + pyScript + '"';
-    Command := pyExe + ' ' + pyScript + ' ' + args;
-
+    Command := pyExe + ' "' + pyScript + '" ' + args;
     // Run the Python script using RunApplication
     RunApplicationAndWAit(Command, 100000);
 
@@ -468,13 +466,13 @@ end;
 //     - Download a file from a URL
 //     url: string, the URL to download
 //     saveto: string, the full filename path to save the downloaded file.
-procedure utl_downloadFunc (url: String; savePath : String);
+function utl_downloadFunc (url: String; savePath : String): Boolean;
 var
     args        : String;
     res         : String;
     checkPath   : String;
 begin
-    args := '--action=download_url --url=' + url + ' --saveto=' + savePath;
+    args := '--action=download_url --url=' + '"' + url + '"' + ' --saveto=' + '"' + savePath + '"';
 
     StatusBar1.Panels[0].Text := 'Downloading...';
     RunPythonScript(args, res);
@@ -491,11 +489,13 @@ begin
        StatusBar1.Panels[0].Text := 'Download completed.';
        Memo_log.Lines.Add('Download: ' + url + ', to ' + savePath + ' complited.');
        MessageDlg('Download completed' , mtInformation, MkSet(mbOK), 0);
+       Result := True;
     end else
     begin
        StatusBar1.Panels[0].Text := 'Download Failed.';
        Memo_log.Lines.Add('Download: ' + url + ', to ' + savePath + ' Failed.');
        MessageDlg('Faild to download.' , mtError, MkSet(mbOK), 0);
+       Result := False;
     end;
 
 end;
@@ -692,7 +692,8 @@ begin
               exit;
         end; // if FileExists(libPath)
 
-        utl_downloadFunc (url, libPath);
+        if utl_downloadFunc (url, libPath) = False then
+           exit;
     end
     else
         MessageDlg('Select an item first', mtInformation, MkSet(mbOK), 0);
@@ -1303,7 +1304,8 @@ begin
              begin
                   if MessageDlg('Do you want to download ' + libComName + '? from ' + libPathUrl, mtConfirmation, MkSet(mbYes, mbNo), 0) = mrYes then
                   begin
-                      utl_downloadFunc(libPathUrl, libPath);
+                      if utl_downloadFunc(libPathUrl, libPath) = False then
+                         exit;
                   end
                   else
                       exit;

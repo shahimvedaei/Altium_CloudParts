@@ -16,6 +16,7 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poDesigned
   OnShow = Form_loadSettings
   PixelsPerInch = 120
   TextHeight = 16
@@ -356,7 +357,7 @@ object Form1: TForm1
       ParentFont = False
     end
     object Label7: TLabel
-      Left = 520
+      Left = 512
       Top = 24
       Width = 62
       Height = 18
@@ -433,12 +434,12 @@ object Form1: TForm1
       OnClick = Button_dbgenerateClick
     end
     object XPSpinEdit_maxfilesno: TXPSpinEdit
-      Left = 588
+      Left = 580
       Top = 24
-      Width = 56
+      Width = 64
       Height = 24
       TabOrder = 4
-      Value = 500
+      Value = 5000
     end
     object CheckBox_updateDB: TCheckBox
       Left = 15
