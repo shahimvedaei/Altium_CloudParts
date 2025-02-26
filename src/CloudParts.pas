@@ -904,10 +904,10 @@ begin
         If LIB_files.Count > 0 Then
             For I := 0 to LIB_files.Count - 1 Do
             Begin
-                if files_count >= files_max then
+                if files_count = files_max then
                 begin
-                    MessageDlg('Reached the Max files. Please close the DXP, and continue the rest of files on the next session.', mtWarning, MkSet(mbOK), 0);
-                    GOTO postprocessing_label;
+                    if MessageDlg('Reached the Max files count ' + IntToStr(XPSpinEdit_maxfilesno.Value) + '. Do you want to continue?', mtWarning, MkSet(mbYes, mbNo), 0) = mrNo then
+                       GOTO postprocessing_label;
                 end;
                 files_count := files_count + 1;
                 Memo_log.Lines.Clear;
@@ -931,10 +931,10 @@ begin
         If LIB_files.Count > 0 Then
             For I := 0 to LIB_files.Count - 1 Do
             Begin
-                if files_count >= files_max then
+                if files_count = files_max then
                 begin
-                    MessageDlg('Reached the Max files. Please close the DXP, and continue the rest of files on the next session.', mtWarning, MkSet(mbOK), 0);
-                    GOTO postprocessing_label;
+                    if MessageDlg('Reached the Max files count ' + IntToStr(XPSpinEdit_maxfilesno.Value) + '. Do you want to continue?', mtWarning, MkSet(mbYes, mbNo), 0) = mrNo then
+                       GOTO postprocessing_label;
                 end;
                 files_count := files_count + 1;
                 Memo_log.Lines.Clear;
