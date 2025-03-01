@@ -755,9 +755,22 @@ object Form1: TForm1
     object Label16: TLabel
       Left = 48
       Top = 64
-      Width = 78
+      Width = 52
       Height = 18
-      Caption = 'Version: 2.2'
+      Caption = 'Version:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label_version: TLabel
+      Left = 105
+      Top = 65
+      Width = 21
+      Height = 18
+      Caption = '2.3'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15
