@@ -5,7 +5,7 @@
 
     License:    GPL
     Copywrite:  FEB 2025
-    Version:    2.2
+    Version:    2.3
     Maintainer: Shahim Vedaei <shahim.vedaei@gmail.com>
 
     Refs:
@@ -472,6 +472,7 @@ var
     res         : String;
     checkPath   : String;
 begin
+    savePath := StringReplace(savePath, '\', '\\', MkSet(rfReplaceAll));  // match the path to python syntax
     args := '--action=download_url --url=' + '"' + url + '"' + ' --saveto=' + '"' + savePath + '"';
 
     StatusBar1.Panels[0].Text := 'Downloading...';
