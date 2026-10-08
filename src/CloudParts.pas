@@ -5,7 +5,7 @@
 
     License:    GPL
     Copywrite:  FEB 2025
-    Version:    2.3
+    Version:    2.4
     Maintainer: Shahim Vedaei <shahim.vedaei@gmail.com>
 
     Refs:
@@ -952,6 +952,12 @@ postprocessing_label:
     // Post processing by python script
     // Due to the limination of Altium Delphi language we need to perfom some processing by python
     DBPostprocessing(dbPath, LIB_path);
+    // python script will create a .tmp file, then here to double check if python is executed we rename .tmp
+    if FileExists(dbPath+'.tmp') then
+    begin
+        DeleteFile(dbPath);
+        RenameFile(dbPath+'.tmp', dbPath);
+    end;
 
     Memo_log.Lines.Clear;
     Memo_log.Lines.Add('Total Lib Files: ' + IntToStr(files_count));

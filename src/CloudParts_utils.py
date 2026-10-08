@@ -48,27 +48,43 @@ def db_postprocess(db_file, dir_base):
 	reader = None
 	dir_base = dir_base.replace("\\", "/")
 
-	with open(db_file, newline="") as csvfile:
-		reader = list(csv.reader(csvfile))
+	encoding = "utf-8"
+	try:
+		with open(db_file, newline="", encoding=encoding) as csvfile:
+			reader = list(csv.reader(csvfile))
+	except UnicodeDecodeError:
+		encoding = "cp1252"
+		with open(db_file, newline="", encoding=encoding) as csvfile:
+			reader = list(csv.reader(csvfile))
 
-		# Read and print the third column
-		for i in range(1, len(reader)):  # Start from index 1 to skip the header
-			if len(reader[i]) >= 3:  # Ensure the row has at least 2 columns
-				if reader[i][IND_PATH][0] == "/":
-					rel_path = reader[i][IND_PATH][1:]
-				else:
-					rel_path = reader[i][IND_PATH]
-	
-				true_path = os.path.join(dir_base, rel_path)
-				if os.path.exists(true_path):
-					true_path = str(Path(true_path).resolve())
-				true_path = true_path.replace("\\", "/")
-				true_path = true_path.removeprefix(dir_base)
-				# update the path
-				reader[i][IND_PATH] = true_path
+	library_paths = {}
+	for root, dirs, files in os.walk(dir_base):
+		for filename in files:
+			file_path = os.path.join(root, filename)
+			relative_path = os.path.relpath(file_path, dir_base).replace("\\", "/")
+			library_paths.setdefault(relative_path.casefold(), []).append(file_path)
+
+	# Read and print the third column
+	for i in range(1, len(reader)): # Start from index 1 to skip the header
+		if len(reader[i]) > IND_PATH and reader[i][IND_PATH]:
+			rel_path = reader[i][IND_PATH].replace("\\", "/").lstrip("/")
+
+			true_path = os.path.join(dir_base, rel_path)
+			if os.path.exists(true_path):
+				true_path = str(Path(true_path).resolve())
+			else:
+				matches = library_paths.get(rel_path.casefold(), [])
+				if len(matches) == 1:
+					true_path = matches[0]
+				elif len(matches) > 1:
+					print(f"Ambiguous path case, left unchanged: {rel_path}")
+			true_path = true_path.replace("\\", "/")
+			true_path = true_path.removeprefix(dir_base)
+			# update the path
+			reader[i][IND_PATH] = true_path
 
 	# Write the modified data back to the same file
-	with open(db_file, "w", newline="") as csvfile:
+	with open(db_file+".tmp", "w", newline="", encoding=encoding) as csvfile:
 		writer = csv.writer(csvfile)
 		writer.writerows(reader)
 		print("Database file updated successfully!")
