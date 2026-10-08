@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 0
   Top = 0
   HorzScrollBar.Visible = False
-  Caption = 'CloudParts, Search and Place Components from Cloud'
+  Caption = 'CloudParts, Search and Place Components from Cloud v2.4'
   ClientHeight = 648
   ClientWidth = 682
   Color = 2763306
@@ -718,7 +718,7 @@ object Form1: TForm1
       Top = 40
       Width = 352
       Height = 18
-      Caption = 'CloudParts, Search and Place Components from Cloud'
+      Caption = 'CloudParts, Search and Place Components from Cloud v2.4'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15
@@ -770,7 +770,7 @@ object Form1: TForm1
       Top = 65
       Width = 21
       Height = 18
-      Caption = '2.3'
+      Caption = '2.4'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -15
